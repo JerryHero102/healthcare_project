@@ -6,7 +6,7 @@ const Button = ({ children, className = '', ...props }) => (
   <button
     {...props}
     // Classes mặc định + nối thêm className tùy chỉnh (className cuối cùng để override nếu cần)
-    className={`btn-secondary ${className}`}>
+    className={`btn-primary ${className}`}>
     {children}
   </button>
 );

@@ -24,4 +24,5 @@
 --   password VARCHAR(255) NOT NULL
 -- )
 
-
+-- INSERT INTO auth_users (employee_id, phone_number, password) VALUES
+-- ('0201050607', '0123456789', 'hashed_password_1');

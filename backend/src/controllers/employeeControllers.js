@@ -38,7 +38,8 @@ export const loginEmployee = async (req, res) => {
   const { employee_id, password } = req.body;
 
   try {
-    const result = await db.query("SELECT * FROM auth_users WHERE username = $1", [employee_id]); // Truy vấn người dùng theo username
+    // Truy vấn người dùng theo employee_id (đồng nhất với khi đăng ký)
+    const result = await db.query("SELECT * FROM auth_users WHERE employee_id = $1", [employee_id]);
     const user = result.rows[0];
 
     if (!user) return res.status(400).json({ error: "Không tìm thấy tài khoản" });
@@ -46,8 +47,9 @@ export const loginEmployee = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password); // So sánh password nhập vào với password đã băm trong cơ sở dữ liệu
     if (!isMatch) return res.status(400).json({ error: "Sai mật khẩu" });
 
-    const token = jwt.sign({ id: user.id }, "SECRET_KEY", { expiresIn: "1h" }); // Tạo JWT token
-    res.json({ message: "Đăng nhập thành công", token });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET || "SECRET_KEY", { expiresIn: "1h" }); // Tạo JWT token
+    // Trả về cấu trúc thống nhất
+    res.json({ success: true, message: "Đăng nhập thành công", token });
 
   } catch (err) {
 

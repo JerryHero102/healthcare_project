@@ -25,6 +25,7 @@ import KhamBenhTrucTuyen from './pages/UserPage/DichVu/KhamBenhTrucTuyen/KhamBen
 // ADMIN PAGES
 import DashBoard from './pages/AdminPage/DashBoard';
 import Login_E from './pages/AdminPage/auth/Login_E';
+import Register_E from './pages/AdminPage/auth/Register_E';
 // NOT FOUND PAGE
 import NotFound from './pages/NotFound.jsx';
 
@@ -73,8 +74,9 @@ function App() {
         <Route path="/kham-benh-truc-tuyen" element={<KhamBenhTrucTuyen />} />
 
         {/*Trang Admin riêng */}
-        <Route path="/Admin" element={<Navigate to="/Admin/Login" replace />} />
-        <Route path='/Admin/Login' element={<Login_E/>}/>  
+        <Route path="/Admin" element={<Navigate to="/Admin/auth/Login" replace />} />
+        <Route path='/Admin/auth/Login' element={<Login_E/>}/>  
+        <Route path='/Admin/auth/register' element={<Register_E/>}/>
         <Route path='/Admin/Dashboard' element={<DashBoard />}/> 
 
         {/* NOT FOUND 404 */}
