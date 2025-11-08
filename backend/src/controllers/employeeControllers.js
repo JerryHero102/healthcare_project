@@ -15,13 +15,13 @@ export const getListEmployee = (request, response) => {
  REGISTER EMPLOYEE
 ---------*/
 export const registerEmployee = async (req, res) => {
-  const { username, password } = req.body;
+  const { employee_id, password } = req.body;
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10); // Băm password trước khi lưu vào cơ sở dữ liệu
     const result = await db.query(  // Thêm RETURNING * để trả về user vừa tạo
-      "INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *",  
-      [username, hashedPassword] // Thêm hashedPassword thay vì password
+      "INSERT INTO auth_users (employee_id, password) VALUES ($1, $2) RETURNING *",  
+      [employee_id, hashedPassword] // Thêm hashedPassword thay vì password
     );
 
     res.status(201).json(result.rows[0]);
@@ -35,10 +35,10 @@ export const registerEmployee = async (req, res) => {
  LOGIN EMPLOYEE
 ---------*/
 export const loginEmployee = async (req, res) => {
-  const { username, password } = req.body;
+  const { employee_id, password } = req.body;
 
   try {
-    const result = await db.query("SELECT * FROM users WHERE username = $1", [username]); // Truy vấn người dùng theo username
+    const result = await db.query("SELECT * FROM auth_users WHERE username = $1", [employee_id]); // Truy vấn người dùng theo username
     const user = result.rows[0];
 
     if (!user) return res.status(400).json({ error: "Không tìm thấy tài khoản" });
