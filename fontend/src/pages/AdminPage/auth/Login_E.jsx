@@ -21,17 +21,22 @@ const Login_E = () => {
                 password,
             });
 
-            if (res.data && res.data.token) {
-                localStorage.setItem("token", res.data.token); // Lưu token
-                setMessage("Đăng nhập thành công!");
-                navigate('/Admin/Dashboard', { replace: true });
+            if (res.data?.token) {
+                localStorage.setItem('token', res.data.token);
+                // store employeeId so Profile/E can fetch data
+                localStorage.setItem('employeeId', employeeId);
+                navigate('/Admin/Dashboard');
             } else {
-                setMessage(res.data?.message || 'Đăng nhập thất bại');
+                setMessage(res.data?.message || 'Login failed');
             }
         } catch (err) {
-            setMessage(err.response?.data?.error || err.response?.data?.message || "Lỗi kết nối server");
-        }
+    setMessage(err.response?.data?.message || err.message || 'Network error');
+  }
     };
+
+    // ----------
+    // UI
+    // ----------//
   return (
     <div>
         <div className="min-h-screen flex items-center justify-center bg-bg-basic">

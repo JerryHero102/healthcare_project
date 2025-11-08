@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { getListEmployee, loginEmployee, registerEmployee } from '../controllers/employeeControllers.js'
+import { getEmployeeById, getListEmployee, loginEmployee, registerEmployee } from '../controllers/employeeControllers.js'
 
 const router = express.Router();
 
@@ -8,5 +8,6 @@ const router = express.Router();
 // Login
 router.get("/", getListEmployee);
 router.post("/register", registerEmployee);
+router.get('/:employee_id', getEmployeeById); // <-- Lấy theo employee_id
 router.post("/login", loginEmployee);
 export default router;

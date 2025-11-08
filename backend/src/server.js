@@ -2,6 +2,9 @@ import express from 'express';
 import employeesRouters from './routes/employeesRouters.js'
 import cors from 'cors';
 import dotenv from 'dotenv';
+import pool from './config/db.js';
+import bcrypt from 'bcryptjs';
+
 dotenv.config();
 
 const PORT = process.env.PORT || 5001;
@@ -14,9 +17,34 @@ app.use(express.json());
 
 app.use(("/api/employee"), employeesRouters);
 
-app.listen(PORT, () => {
-        console.log(`Start Server on Port: ${PORT}`);
-});
+// Ensure default admin account exists before starting server
+const ensureDefaultAdmin = async () => {
+        const adminId = process.env.ADMIN_EMPLOYEE_ID || '00000admin';
+        const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123';
+
+        try {
+                const { rowCount } = await pool.query('SELECT 1 FROM auth_users WHERE employee_id = $1', [adminId]);
+                if (rowCount === 0) {
+                        const hashed = await bcrypt.hash(adminPassword, 10);
+                        await pool.query('INSERT INTO auth_users (employee_id, password) VALUES ($1, $2)', [adminId, hashed]);
+                        console.log(`Default admin created -> employee_id: ${adminId}`);
+                } else {
+                        console.log('Default admin already exists');
+                }
+        } catch (err) {
+                console.error('Error ensuring default admin:', err.message || err);
+        }
+};
+
+const start = async () => {
+        await ensureDefaultAdmin();
+
+        app.listen(PORT, () => {
+                console.log(`Start Server on Port: ${PORT}`);
+        });
+};
+
+start();
 
 
 

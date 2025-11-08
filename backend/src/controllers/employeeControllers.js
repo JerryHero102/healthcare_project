@@ -56,3 +56,29 @@ export const loginEmployee = async (req, res) => {
     res.status(500).json({ error: "Đăng nhập thất bại" });
   }
 };
+
+
+/*--------- 
+ GET EMPLOYEE BY ID
+---------*/
+export const getEmployeeById = async (req, res) => {
+  const { employee_id } = req.params;
+  try {
+    const q = `
+      SELECT a.employee_id,
+             a.phone_number AS auth_phone,
+             i.full_name, i.email, i.phone_number AS contact_phone,
+             i.card_id, i.date_of_birth, i.permanent_address, i.current_address
+      FROM auth_users a
+      LEFT JOIN information_user i ON a.employee_id = i.employee_id
+      WHERE a.employee_id = $1
+      LIMIT 1
+    `;
+  const { rows, rowCount } = await db.query(q, [employee_id]);
+    if (rowCount === 0) return res.status(404).json({ ok: false, message: 'Not found' });
+    return res.json({ ok: true, data: rows[0] });
+  } catch (err) {
+    console.error('Lấy ID Nhân viên không thành công:', err);
+    return res.status(500).json({ ok: false, error: 'Lỗi kết nối Server' });
+  }
+};
