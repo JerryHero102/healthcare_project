@@ -23,7 +23,7 @@ import XetNghiemTaiNha from './pages/UserPage/DichVu/XetNghiem/XetNghiemTaiNha';
 import PhucHoiChucNang from './pages/UserPage/DichVu/PhucHoiChucNang/PhucHoiChucNang';
 import KhamBenhTrucTuyen from './pages/UserPage/DichVu/KhamBenhTrucTuyen/KhamBenhTrucTuyen';
 // ADMIN PAGES
-import DashBoard from './pages/AdminPage/DashBoard';
+import DashBoard from './pages/AdminPage/AdminHomePage/DashBoard';
 import Login_E from './pages/AdminPage/auth/Login_E';
 import Register_E from './pages/AdminPage/auth/Register_E';
 // NOT FOUND PAGE
