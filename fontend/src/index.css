@@ -1,4 +1,5 @@
-@import "tailwindcss";
+@import "tailwindcss/preflight";
+@import "tailwindcss/utilities";
 
 /* ===== GLOBAL VARIABLES ===== */
 :root {
@@ -27,7 +28,8 @@
 
 /* Primary Button - Dùng chung cho tất cả các nút chính */
 .btn-primary {
-  @apply bg-[#FFC419] hover:bg-[#e6ae14] text-white font-semibold px-6 py-2 rounded-xl shadow-md transition-colors cursor-pointer;
+  /* use mapped colors from tailwind.config.js */
+  @apply hover:bg-primary-hover text-white font-semibold px-6 py-2 rounded-xl shadow-md transition-colors cursor-pointer;
 }
 
 /* Secondary Button - Dùng cho các nút phụ */

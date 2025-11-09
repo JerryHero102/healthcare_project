@@ -78,9 +78,9 @@ const Login_E = () => {
                 </div>
                 <div className='flex item-center justify-center mt-4 hove'>
                     
-                    <Button type="submit" className='w-full hover:bg-purple-400'>
+                    <button type="submit" className='btn-primary w-full'>
                         Đăng nhập
-                    </Button>
+                    </button>
                 </div>
                 <div className="mt-2 text-center">
                     <button

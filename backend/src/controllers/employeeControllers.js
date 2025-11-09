@@ -70,7 +70,7 @@ export const getEmployeeById = async (req, res) => {
              i.full_name, i.email, i.phone_number AS contact_phone,
              i.card_id, i.date_of_birth, i.permanent_address, i.current_address
       FROM auth_users a
-      LEFT JOIN information_user i ON a.employee_id = i.employee_id
+      LEFT JOIN information_user i ON a.phone_number = i.phone_number
       WHERE a.employee_id = $1
       LIMIT 1
     `;
