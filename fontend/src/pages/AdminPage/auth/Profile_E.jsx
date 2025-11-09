@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Login_E from "./Login_E";
 import axios from "axios";
 
@@ -6,6 +7,7 @@ const Profile_E = ({ employeeData }) => {
     const [data, setData] = useState(employeeData || null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+  const navigate = useNavigate();
 
     useEffect(() => {
       const fetchData = async () => {
@@ -108,10 +110,26 @@ const Profile_E = ({ employeeData }) => {
                     </div>
                     
                     {/* Nút Chỉnh sửa / Đăng xuất */}
-                    <div className="mt-8 flex justify-end gap-3">
-                        <button className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300">Chỉnh Sửa</button>
-                        <button className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">Đăng Xuất</button>
-                    </div>
+          <div className="mt-8 flex justify-end gap-3">
+            <button className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300">Chỉnh Sửa</button>
+            <button
+              type="button"
+              className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+              onClick={() => {
+                if (!window.confirm('Bạn có chắc muốn đăng xuất?')) return;
+                try {
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('employeeId');
+                } catch (e) {
+                  // ignore storage errors
+                }
+                setData(null);
+                navigate('/Admin/auth/Login', { replace: true });
+              }}
+            >
+              Đăng Xuất
+            </button>
+          </div>
                 </div>
 
             </div>

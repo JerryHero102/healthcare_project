@@ -1,18 +1,25 @@
 import { useState } from "react";
 import axios from "axios";
-import DS_BN_ChuaKham from "../QLBenhNhan/DS_BN_ChuaKham";
-import DS_BN from "../QLBenhNhan/DS_BN";
-import Them_BN from "../QLBenhNhan/Them_BN";
-import DS_BS from "../QL_NhanVien/DS_BS";
-import DS_YTa from "../QL_NhanVien/DS_YTa";
-import PhongKham from "../QL_HeThong/PhongKham";
-import HeThong from "../QL_HeThong/HeThong";
-import DS_KTV from "../QL_NhanVien/DS_KTV";
-import QL_Quy from "../QL_DoanhThu/QL_Quy";
+// TIẾP TÂN
+import DS_BN from "../Receptionist/DS_BN";
+import Them_BN from "../Receptionist/Them_BN";
+// BÁC SĨ
+import Individual_Patient_Management from "../Doctor/Individual_Patient_Management"; //Quản lý bệnh nhân của bác sĩ
+import Test_Result from "../Doctor/Test_Result"; //Phiếu xét nghiệm
+import Work_Schedule from "../Doctor/Work_Schedule"; //Lịch làm việc của bác sĩ
+// BÁC SĨ XÉT NGHIỆM/ CHỤP PHIM....
+import Laboratory_Test_Report from "../DoctorOther/Laboratory_Test_Report"
+import Test_Result_Form from "../DoctorOther/Test_Result_Form"
+// HỆ THỐNG
+import Appointment_List from "../System/Appointment_List"; //Danh sách cuộc hẹn
+import Patient_List_Details from "../System/Patient_List_Details"; //Danh sách chi tiết thông tin bệnh nhân
+// KẾ TOÁN
+import Found_Management from "../Accounting/Fund_Management";
+import SalaryManagement from "../Accounting/SalaryManagement";
 //ĐĂNG NHẬP/ĐĂNG KÝ
-import Login_E from "../auth/Login_E"; 
-import Register_E from "../auth/Register_E"; 
-import Profile_E from "../auth/Profile_E";
+import Login_E from "../Auth/Login_E"; 
+import Register_E from "../Auth/Register_E"; 
+import Profile_E from "../Auth/Profile_E";
 import Sidebar from './sidebar';
 import UserInfoToolbar from './toolbar';
 
@@ -56,31 +63,30 @@ const DashBoard = () => {
                     {/* PROFILE EMPLOYEE */}
                     {context === "Thông tin Nhân Viên" && <Profile_E setContext={setContext} />}
 
-                    {/*Bệnh Nhân */}
+                    {/* TIẾP TÂN */}
                     {context === "Thêm BN mới" && <Them_BN setContext={setContext} />}
-                    {/*DS bệnh nhân chưa khám */}
-                    {context === "Danh sách BN chưa khám bệnh" && <DS_BN_ChuaKham setContext={setContext} />}
-                    {/*DS bệnh nhân đã khám */}
-                    {context === "Danh sách BN đã khám bệnh" && <DS_BN setContext={setContext} />}
+                    {context === "Danh sách BN" && <DS_BN setContext={setContext} />}
                     
-                    {/*QL Bác sĩ */}
-                    {context === "Quản lý Bác sĩ" && <DS_BS setContext={setContext} />}
-                    {/*QL Y Tá */}
-                    {context === "Quản lý Y tá" && <DS_YTa setContext={setContext} />}
-                    {/*QL KTV Y tế */}
-                    {context === "Quản lý KTV Y tế" && <DS_KTV setContext={setContext} />}
+                    {/* BÁC SĨ */}
+                    {context === "Quản lý BN cá nhân" && <Individual_Patient_Management setContext={setContext} />}
+                    {context === "Quản lý phiếu" && <Test_Result setContext={setContext} />}
+                    {context === "Quản lý kết quả xét nghiệm" && <div>Quản lý kết quả xét nghiệm</div>}
+                    {context === "Quản lý lịch làm việc" && <Work_Schedule setContext={setContext} />}
 
-                    {/*QL Phòng Khám */}
-                    {context === "Quản lý Phòng khám" && <PhongKham setContext={setContext} />}
-                    {/*QL Hệ Thống*/}
-                    {context === "Quản lý Hệ thống PK" && <HeThong setContext={setContext} />}
+                    {/* BÁC SĨ XÉT NGHIỆM/ CHỤP PHIM.... */}
+                    {context === "Kết quả xét nghiệm" && <Laboratory_Test_Report setContext={setContext} />}
+                    {context === "Nhận phiếu xét nghiệm" && <Test_Result_Form setContext={setContext} />}
 
-                    {/* QL DOANH THU */}
+                    {/* KẾ TOÁN */}
+                    {context === "Quản lý Quỹ" && <Found_Management setContext={setContext} />}
+                    {context === "Quản lý Lương" && <SalaryManagement setContext={setContext} />}
                     {context === "DT Khám & Chữa Bệnh" && <div>DT Khám & Chữa Bệnh</div>}
                     {context === "Chi Phí HĐ" && <div>Chi Phí HĐ</div>}
                     {context === "QL TT Bảo Hiểm" && <div>QL TT Bảo Hiểm</div>}
-                    {context === "TT Công nợ & Lương" && <div>TT Công nợ & Lương</div>}
-                    {context === "QL Quỹ" && <QL_Quy setContext={setContext} />}
+
+                    {/* HỆ THỐNG */}
+                    {context === "Danh sách lịch hẹn BN" && <Appointment_List setContext={setContext} />}
+                    {context === "Danh sách chi tiết BN" && <Patient_List_Details setContext={setContext} />}
                 </main>
             </div>
         </div>

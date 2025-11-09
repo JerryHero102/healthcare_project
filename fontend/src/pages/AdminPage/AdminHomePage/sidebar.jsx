@@ -12,35 +12,41 @@ const Sidebar = ({ getNavClasses, setContext }) => {
 
             {/* DÀNH CHO TIẾP TÂN */}
             <div className="w-full">
-                <TextTittle>Quản lý Bệnh Nhân</TextTittle>
+                <TextTittle>Tiếp Tân</TextTittle>
                 <div className={getNavClasses("Thêm BN mới")} onClick={() => setContext("Thêm BN mới")}>Thêm BN mới</div>
-                <div className={getNavClasses("Danh sách BN đã khám bệnh")} onClick={() => setContext("Danh sách BN đã khám bệnh")}>Danh sách BN</div>
-                <div className={getNavClasses("Danh sách BN chưa khám bệnh")} onClick={() => setContext("Danh sách BN chưa khám bệnh")}>Danh sách BN chưa khám bệnh</div>
+                <div className={getNavClasses("Danh sách BN")} onClick={() => setContext("Danh sách BN")}>Danh sách BN</div>
             </div>
 
-            {/* DÀNH CHO QUẢN LÝ NHÂN VIÊN */}
+            {/* DÀNH CHO BÁC SĨ */}
             <div className="w-full">
-                <TextTittle>QL Nhân viên</TextTittle>
-                <div className={getNavClasses("Quản lý Bác sĩ")} onClick={() => setContext("Quản lý Bác sĩ")}>Quản lý Bác sĩ</div>
-                <div className={getNavClasses("Quản lý Y tá")} onClick={() => setContext("Quản lý Y tá")}>Quản lý Y tá</div>
-                <div className={getNavClasses("Quản lý KTV Y tế")} onClick={() => setContext("Quản lý KTV Y tế")}>Quản lý KTV Y tế</div>
+                <TextTittle>Bác Sĩ</TextTittle>
+                <div className={getNavClasses("Quản lý BN cá nhân")} onClick={() => setContext("Quản lý BN cá nhân")}>Quản lý BN cá nhân</div>
+                <div className={getNavClasses("Quản lý phiếu")} onClick={() => setContext("Quản lý phiếu")}>Quản lý phiếu</div>
+                <div className={getNavClasses("Quản lý kết quả xét nghiệm")} onClick={() => setContext("Quản lý kết quả xét nghiệm")}>Quản lý kết quả xét nghiệm</div>
+                <div className={getNavClasses("Quản lý lịch làm việc")} onClick={() => setContext("Quản lý lịch làm việc")}>Quản lý lịch làm việc</div>
             </div>
-
-            {/* DÀNH CHO QUẢN LÝ PHÒNG KHÁM*/}
+            {/* DÀNH CHO BÁC SĨ XÉT NGHIỆM ... */}
             <div className="w-full">
-                <TextTittle>QL Phòng khám</TextTittle>
-                <div className={getNavClasses("Quản lý Phòng khám")} onClick={() => setContext("Quản lý Phòng khám")}>Quản lý Phòng khám</div>
-                <div className={getNavClasses("Quản lý Hệ thống PK")} onClick={() => setContext("Quản lý Hệ thống PK")}>Quản lý Hệ thống PK</div>
+                <TextTittle>Bác Sĩ Xét Nghiệm</TextTittle>
+                <div className={getNavClasses("Nhận phiếu xét nghiệm")} onClick={() => setContext("Nhận phiếu xét nghiệm")}>Nhận phiếu xét nghiệm</div>
+                <div className={getNavClasses("Kết quả xét nghiệm")} onClick={() => setContext("Kết quả xét nghiệm")}>Kết quả xét nghiệm</div>
             </div>
 
             {/* DÀNH CHO KẾ TOÁN */}
             <div className="w-full">
-                <TextTittle>QL Doanh thu</TextTittle>
+                <TextTittle>Kế Toán</TextTittle>
+                <div className={getNavClasses("Quản lý Quỹ")} onClick={() => setContext("Quản lý Quỹ")}>Quản lý Quỹ</div>
+                <div className={getNavClasses("Quản lý Lương")} onClick={() => setContext("Quản lý Lương")}>Quản lý Lương</div>
                 <div className={getNavClasses("DT Khám & Chữa Bệnh")} onClick={() => setContext("DT Khám & Chữa Bệnh")}>DT Khám & Chữa Bệnh</div>
-                <div className={getNavClasses("Chi Phí HĐ")} onClick={() => setContext("Chi Phí HĐ")}>Chi Phí HĐ</div>
                 <div className={getNavClasses("QL TT Bảo Hiểm")} onClick={() => setContext("QL TT Bảo Hiểm")}>QL TT Bảo Hiểm</div>
-                <div className={getNavClasses("TT Công nợ & Lương")} onClick={() => setContext("TT Công nợ & Lương")}>TT Công nợ & Lương</div>
-                <div className={getNavClasses("QL Quỹ")} onClick={() => setContext("QL Quỹ")}>QL Quỹ</div>
+                <div className={getNavClasses("Chi Phí HĐ")} onClick={() => setContext("Chi Phí HĐ")}>Chi Phí HĐ</div>
+            </div>
+
+            {/* DÀNH CHO HỆ THỐNG */}
+            <div className="w-full">
+                <TextTittle>Hệ Thống</TextTittle>
+                <div className={getNavClasses("Danh sách lịch hẹn BN")} onClick={() => setContext("Danh sách Lịch hẹn BN")}>Danh sách Lịch hẹn BN</div>
+                <div className={getNavClasses("Danh sách chi tiết BN")} onClick={() => setContext("Danh sách chi tiết BN")}>Danh sách chi tiết BN</div>
             </div>
         </aside>
     );
