@@ -23,7 +23,6 @@ const Login_E = () => {
 
             if (res.data?.token) {
                 localStorage.setItem('token', res.data.token);
-                // store employeeId so Profile/E can fetch data
                 localStorage.setItem('employeeId', employeeId);
                 navigate('/Admin/Dashboard');
             } else {

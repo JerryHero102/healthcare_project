@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 // TIẾP TÂN
 import DS_BN from "../Receptionist/DS_BN";
@@ -8,7 +8,7 @@ import Individual_Patient_Management from "../Doctor/Individual_Patient_Manageme
 import Test_Result from "../Doctor/Test_Result"; //Phiếu xét nghiệm
 import Work_Schedule from "../Doctor/Work_Schedule"; //Lịch làm việc của bác sĩ
 // BÁC SĨ XÉT NGHIỆM/ CHỤP PHIM....
-import Laboratory_Test_Report from "../DoctorOther/Laboratory_Test_Report"
+import Laboratory_Test_Report from "../DoctorOther/LAboratory_Test_Report"
 import Test_Result_Form from "../DoctorOther/Test_Result_Form"
 // HỆ THỐNG
 import Appointment_List from "../System/Appointment_List"; //Danh sách cuộc hẹn
@@ -20,8 +20,8 @@ import SalaryManagement from "../Accounting/SalaryManagement";
 import Login_E from "../Auth/Login_E"; 
 import Register_E from "../Auth/Register_E"; 
 import Profile_E from "../Auth/Profile_E";
+import Add_Infor_E from "../Auth/Add_Infor_E";
 import Sidebar from './sidebar';
-import UserInfoToolbar from './toolbar';
 
     const renderAuthScreen = (props) => (
         <div className="flex items-center justify-center h-screen bg-[#f5f5f5]">
@@ -33,35 +33,86 @@ import UserInfoToolbar from './toolbar';
 
 const DashBoard = () => {
     //Mặc định
-    const [context, setContext] = useState("Thông tin Nhân Viên");
+    const [context, setContext] = useState("Thông tin cá nhân");
     const getNavClasses = (navItem) => {
-        // Classes mặc định
-        const defaultClasses = "text-[12px] text-black my-1 cursor-pointer px-3 py-2 rounded transition w-full truncate hover:bg-[#FFC419]";
-        const activeClasses = "bg-[#FFC419] font-bold text-black"; 
-    
-            if (context === navItem) {
+        // Classes mặc định (reduced spacing, full-width clickable row)
+        const defaultClasses = "flex items-center text-[13px] text-black my-0.5 cursor-pointer px-3 py-2 rounded transition w-full truncate";
+        const activeClasses = "bg-[#FFC419] font-semibold text-black"; 
+
+        if (context === navItem) {
             return `${defaultClasses} ${activeClasses}`;
         }
-            return defaultClasses;
+        return defaultClasses;
     };
 
     //ĐỐI TƯỢNG CHỨA CÁC PROPS CẦN
     const dashboardProps = { context, setContext, getNavClasses };
+//     useEffect(() => {
+//     const initFromProfile = async () => {
+//         try {
+//             const employeeId = localStorage.getItem('employeeId');
+//             const token = localStorage.getItem('token');
+//             if (!employeeId || !token) return;
+
+//             const res = await axios.get(`http://localhost:5001/api/employee/${encodeURIComponent(employeeId)}`, {
+//                 headers: { Authorization: `Bearer ${token}` }
+//             });
+
+//             if (!res.data?.ok) return;
+//             const dept = (res.data.data.department || '').trim();
+            
+//             //department trống hoặc null
+//             if (!dept) {
+//                 localStorage.setItem('department', '');
+//                 setContext('Thông tin cá nhân');
+//                 return; // dừng lại, không set gì thêm
+//             }
+
+//             //có phòng ban, lưu lại và xử lý theo vai trò
+//             localStorage.setItem('department', dept);
+
+//             const dep = dept.toLowerCase();
+
+//             if (
+//                 (dep.includes('bác sĩ chuyên') || dep.includes('bác sĩ chuyên khoa') || dep.includes('bác sĩ')) &&
+//                 !dep.includes('kỹ thuật')
+//             ) {
+//                 setContext('Quản lý BN cá nhân'); 
+//                 return;
+//             }
+
+//             if (dep.includes('kỹ thuật') || dep.includes('bác sĩ kỹ thuật')) {
+//                 setContext('Kết quả xét nghiệm');
+//                 return;
+//             }
+
+//             if (dep.includes('kế toán')) {
+//                 setContext('Quản lý Quỹ'); 
+//                 return;
+//             }
+
+//             // Nếu không trùng bất kỳ điều kiện nào
+//             setContext('Thông tin cá nhân');
+
+//         } catch (err) {
+//             console.error('Lỗi khi khởi tạo từ hồ sơ:', err);
+//             setContext('Thông tin cá nhân');
+//         }
+//     };
+//     initFromProfile();
+// }, []);
+
 
     return (
         <div className="flex h-screen">
-            <Sidebar getNavClasses={getNavClasses} setContext={setContext} />
+            <Sidebar getNavClasses={getNavClasses} setContext={setContext} context={context} />
 
             <div className="flex flex-col flex-1 h-screen">
-                <UserInfoToolbar
-                    userName="Nguyễn Thị Bích"
-                    role="Tiếp Tân (Receptionist)"
-                    onClick={() => setContext("Thông tin Nhân Viên")}
-                />
 
                 <main className="flex-1 bg-[#f5f5f5] overflow-y-auto">
                     {/* PROFILE EMPLOYEE */}
-                    {context === "Thông tin Nhân Viên" && <Profile_E setContext={setContext} />}
+                    {context === "Thông tin cá nhân" && <Profile_E setContext={setContext} />}
+                    {context === "Thêm thông tin nhân viên" && <Add_Infor_E setContext={setContext} />}
 
                     {/* TIẾP TÂN */}
                     {context === "Thêm BN mới" && <Them_BN setContext={setContext} />}
