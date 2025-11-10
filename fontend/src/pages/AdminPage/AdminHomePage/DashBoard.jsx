@@ -23,7 +23,6 @@ import Profile_E from "../Auth/Profile_E";
 import Add_Infor_E from "../Auth/Add_Infor_E";
 import UpdateProfile_E from "../Auth/UpdateProfile_E";
 import Sidebar from './sidebar';
-import { Update } from "vite";
 
     const renderAuthScreen = (props) => (
         <div className="flex items-center justify-center h-screen bg-[#f5f5f5]">
