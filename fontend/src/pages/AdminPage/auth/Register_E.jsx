@@ -1,10 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Label from '@/components/ui/label.jsx';
-import Input from '@/components/ui/input.jsx';
-import Button from '@/components/ui/button.jsx';
-import Typography from '@/components/ui/Typography.jsx';
 
 const Register_E = () => {
   const [employeeId, setEmployeeId] = useState('');
@@ -69,31 +65,31 @@ const Register_E = () => {
     return (
     <div className="min-h-screen flex items-center justify-center bg-bg-basic">
       <form onSubmit={handleRegister} className="w-96 border border-border-base rounded-md p-4 bg-white">
-        <Typography variant="h2" className="text-center">Đăng ký</Typography>
+        <h2 variant="h2" className="text-center">Đăng ký</h2>
 
         <div className="mt-4">
-          <Label htmlFor="employee_id">Mã nhân viên (tùy chọn)</Label>
-          <Input id="employee_id" name="employee_id" value={employeeId} onChange={(e) => setEmployeeId(e.target.value)} placeholder="10 số" />
+          <label htmlFor="employee_id">Mã nhân viên (tùy chọn)</label>
+          <input id="employee_id" name="employee_id" value={employeeId} onChange={(e) => setEmployeeId(e.target.value)} placeholder="10 số" />
         </div>
 
         <div className="mt-4">
-          <Label htmlFor="phone">Số điện thoại *</Label>
-          <Input id="phone" name="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="10 số" required />
+          <label htmlFor="phone">Số điện thoại *</label>
+          <input id="phone" name="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="10 số" required />
         </div>
 
          <div className="mt-4">
-          <Label htmlFor="cccd">Căn cước công dân *</Label>
-          <Input id="cccd" name="cccd" type="number" value={cardId} onChange={(e) => setCardId(e.target.value)} placeholder="12 số" required />
+          <label htmlFor="cccd">Căn cước công dân *</label>
+          <input id="cccd" name="cccd" type="number" value={cardId} onChange={(e) => setCardId(e.target.value)} placeholder="12 số" required />
         </div>
 
         <div className="mt-4">
-          <Label htmlFor="password">Mật khẩu *</Label>
-          <Input id="password" name="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <label htmlFor="password">Mật khẩu *</label>
+          <input id="password" name="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </div>
 
         <div className="mt-6 flex gap-2 justify-end">
-          <Button type="button" className="bg-gray-200 text-black" onClick={() => navigate(-1)}>Quay lại</Button>
-          <Button type="submit" className="bg-primary">Đăng ký</Button>
+          <button type="button" className="bg-gray-200 text-black" onClick={() => navigate(-1)}>Quay lại</button>
+          <button type="submit" className="bg-primary">Đăng ký</button>
         </div>
 
         {message && <p className="mt-3 text-sm text-center text-red-600">{message}</p>}
