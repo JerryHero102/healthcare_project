@@ -27,6 +27,7 @@ import DashBoard from './pages/AdminPage/AdminHomePage/DashBoard';
 import Login_E from './pages/AdminPage/Auth/Login_E';
 import Register_E from './pages/AdminPage/Auth/Register_E';
 import ProtectedRoute from './components/ProtectedRoute';
+import UpdateProfile_E from './pages/AdminPage/Auth/UpdateProfile_E';
 // NOT FOUND PAGE
 import NotFound from './pages/NotFound.jsx';
 
@@ -78,6 +79,7 @@ function App() {
         <Route path="/Admin" element={<Navigate to="/Admin/Dashboard" replace />} />
         <Route path='/Admin/auth/Login' element={<Login_E/>}/>  
         <Route path='/Admin/auth/register' element={<Register_E/>}/>
+        <Route path='/Admin/auth/update' element={<UpdateProfile_E/>}/>
         <Route path='/Admin/Dashboard' element={<ProtectedRoute><DashBoard /></ProtectedRoute>} /> 
 
         {/* NOT FOUND 404 */}

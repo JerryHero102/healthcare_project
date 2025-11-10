@@ -10,7 +10,6 @@ export const getListEmployee = (request, response) => {
     response.status(200).send("OK");
 }
 
-
 /*--------- 
  REGISTER EMPLOYEE
 ---------*/
@@ -96,9 +95,6 @@ export const registerEmployee = async (req, res) => {
   }
 };
 
-
-
-
 /*--------- 
  LOGIN EMPLOYEE
 ---------*/
@@ -124,7 +120,6 @@ export const loginEmployee = async (req, res) => {
     res.status(500).json({ error: "Đăng nhập thất bại" });
   }
 };
-
 
 /*--------- 
  GET EMPLOYEE BY ID
@@ -221,6 +216,37 @@ export const getUserById = async (req, res) => {
       ok: false,
       error: "❌ Lỗi kết nối server!"
     });
+  }
+};
+
+/*--------- 
+ UPDATE EMPLOYEE
+---------*/
+export const updateEmployee = async (req, res) => {
+  const { employee_id } = req.params;
+  const updates = req.body;
+
+  try {
+    const fields = Object.keys(updates);
+    const values = Object.values(updates);
+
+    if (fields.length === 0) {
+      return res.status(400).json({ error: "⚠️ Không có dữ liệu để cập nhật!" });
+    }
+
+    // Tạo câu query động
+    const setQuery = fields.map((field, i) => `${field} = $${i + 1}`).join(', ');
+    const query = `UPDATE infor_users SET ${setQuery} WHERE employee_id = $${fields.length + 1} RETURNING *`;
+
+    const { rows } = await db.query(query, [...values, employee_id]);
+
+    return res.status(200).json({
+      message: "✅ Cập nhật thành công!",
+      user: rows[0]
+    });
+  } catch (err) {
+    console.error("Update employee error:", err);
+    return res.status(500).json({ error: "❌ Cập nhật thất bại, lỗi server!" });
   }
 };
 

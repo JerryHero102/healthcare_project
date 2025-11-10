@@ -21,12 +21,14 @@ app.use(("/api/employee"), employeesRouters);
 const ensureDefaultAdmin = async () => {
         const adminId = process.env.ADMIN_EMPLOYEE_ID || '00000admin';
         const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123';
-
+        const card_id = process.env.ADMIN_CARD_ID || '000000000000';
+        const phone_number = process.env.ADMIN_PHONE || '0000000000';
+        const role = 'employee';
         try {
-                const { rowCount } = await pool.query('SELECT 1 FROM auth_users WHERE employee_id = $1', [adminId]);
+                const { rowCount } = await pool.query('SELECT 1 FROM infor_users WHERE employee_id = $1', [adminId]);
                 if (rowCount === 0) {
                         const hashed = await bcrypt.hash(adminPassword, 10);
-                        await pool.query('INSERT INTO auth_users (employee_id, password) VALUES ($1, $2)', [adminId, hashed]);
+                        await pool.query('INSERT INTO infor_users (employee_id, phone_number, password, card_id, role_user) VALUES ($1, $2, $3, $4, $5)', [adminId, hashed]);
                         console.log(`Default admin created -> employee_id: ${adminId}`);
                 } else {
                         console.log('Default admin already exists');

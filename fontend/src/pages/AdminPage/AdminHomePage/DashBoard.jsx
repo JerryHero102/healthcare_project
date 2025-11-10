@@ -8,7 +8,7 @@ import Individual_Patient_Management from "../Doctor/Individual_Patient_Manageme
 import Test_Result from "../Doctor/Test_Result"; //Phiếu xét nghiệm
 import Work_Schedule from "../Doctor/Work_Schedule"; //Lịch làm việc của bác sĩ
 // BÁC SĨ XÉT NGHIỆM/ CHỤP PHIM....
-import Laboratory_Test_Report from "../DoctorOther/LAboratory_Test_Report"
+import Laboratory_Test_Report from "../DoctorOther/Laboratory_Test_Report"
 import Test_Result_Form from "../DoctorOther/Test_Result_Form"
 // HỆ THỐNG
 import Appointment_List from "../System/Appointment_List"; //Danh sách cuộc hẹn
@@ -21,7 +21,9 @@ import Login_E from "../Auth/Login_E";
 import Register_E from "../Auth/Register_E"; 
 import Profile_E from "../Auth/Profile_E";
 import Add_Infor_E from "../Auth/Add_Infor_E";
+import UpdateProfile_E from "../Auth/UpdateProfile_E";
 import Sidebar from './sidebar';
+import { Update } from "vite";
 
     const renderAuthScreen = (props) => (
         <div className="flex items-center justify-center h-screen bg-[#f5f5f5]">
@@ -113,6 +115,7 @@ const DashBoard = () => {
                     {/* PROFILE EMPLOYEE */}
                     {context === "Thông tin cá nhân" && <Profile_E setContext={setContext} />}
                     {context === "Thêm thông tin nhân viên" && <Add_Infor_E setContext={setContext} />}
+                    {context === "Chỉnh sửa thông tin nhân viên " && <UpdateProfile_E setContext={setContext}/>}
 
                     {/* TIẾP TÂN */}
                     {context === "Thêm BN mới" && <Them_BN setContext={setContext} />}

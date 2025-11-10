@@ -125,9 +125,12 @@ const Profile_E = ({ employeeData }) => {
               <DetailRow label="Tình trạng HĐ" value={display.tinhTrang} />
             </div>
 
-            {/* Nút hành động */}
             <div className="mt-8 flex justify-end gap-3">
-              <button className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300">Chỉnh Sửa</button>
+              <button 
+                type="button" 
+                className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300"
+                  onClick={() => navigate('/Admin/auth/update')}
+                  >Chỉnh Sửa</button>
               <button
                 type="button"
                 className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
