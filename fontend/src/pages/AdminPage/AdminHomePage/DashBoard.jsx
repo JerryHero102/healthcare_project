@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 // TIẾP TÂN
 import DS_BN from "../Receptionist/DS_BN";
 import Them_BN from "../Receptionist/Them_BN";
@@ -22,7 +21,13 @@ import Register_E from "../Auth/Register_E";
 import Profile_E from "../Auth/Profile_E";
 import Add_Infor_E from "../Auth/Add_Infor_E";
 import UpdateProfile_E from "../Auth/UpdateProfile_E";
+//HOME PAGE
 import Sidebar from './sidebar';
+//ADMINSTATOR
+import Accounts_Management from "../Adminstator/Accounts_Management";
+import Employees_Management from "../Adminstator/Employees_Management";
+
+
 
     const renderAuthScreen = (props) => (
         <div className="flex items-center justify-center h-screen bg-[#f5f5f5]">
@@ -36,7 +41,7 @@ const DashBoard = () => {
     //Mặc định
     const [context, setContext] = useState("Thông tin cá nhân");
     const getNavClasses = (navItem) => {
-        // Classes mặc định (reduced spacing, full-width clickable row)
+        // Classes mặc định
         const defaultClasses = "flex items-center text-[13px] text-black my-0.5 cursor-pointer px-3 py-2 rounded transition w-full truncate";
         const activeClasses = "bg-[#FFC419] font-semibold text-black"; 
 
@@ -113,8 +118,12 @@ const DashBoard = () => {
                 <main className="flex-1 bg-[#f5f5f5] overflow-y-auto">
                     {/* PROFILE EMPLOYEE */}
                     {context === "Thông tin cá nhân" && <Profile_E setContext={setContext} />}
-                    {context === "Thêm thông tin nhân viên" && <Add_Infor_E setContext={setContext} />}
                     {context === "Chỉnh sửa thông tin nhân viên " && <UpdateProfile_E setContext={setContext}/>}
+                    {context === "Thêm thông tin nhân viên" && <Add_Infor_E setContext={setContext} />}
+
+                    {/* ADMINSTATOR */}
+                    {context === "Quản lý tài khoản" && <Accounts_Management setContext={setContext} />}
+                    {context === "Quản lý nhân viên" && <Employees_Management setContext={setContext} />}
 
                     {/* TIẾP TÂN */}
                     {context === "Thêm BN mới" && <Them_BN setContext={setContext} />}

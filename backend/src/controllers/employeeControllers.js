@@ -2,14 +2,6 @@ import db from '../config/db.js';
 import bcrypt from 'bcryptjs';
 import jwt from "jsonwebtoken";
 
-
-/*--------- 
- GET LIST EMPLOYEE
----------*/
-export const getListEmployee = (request, response) => {
-    response.status(200).send("OK");
-}
-
 /*--------- 
  REGISTER EMPLOYEE
 ---------*/
@@ -250,3 +242,42 @@ export const updateEmployee = async (req, res) => {
   }
 };
 
+/*--------- 
+ GET LIST EMPLOYEE
+---------*/
+export const getListEmployee = async (req, res) => {
+  try {
+    const q = `
+      SELECT 
+        id,
+        full_name,
+        employee_id,
+        card_id,
+        phone_number,
+        permanent_address,
+        current_address
+      FROM infor_users
+      WHERE role_user = 'employee'
+      ORDER BY full_name ASC
+    `;
+    const { rows, rowCount } = await db.query(q);
+    if (rowCount === 0) {
+      return res.status(404).json({
+        ok: false,
+        message: "❌ Không tìm thấy khách hàng có số điện thoại này!"
+      });
+    }
+
+    return res.status(200).json({
+      ok: true,
+      data: rows
+    });
+
+  } catch (err) {
+    console.error("Lấy thông tin khách hàng không thành công:", err);
+    return res.status(500).json({
+      ok: false,
+      error: "❌ Lỗi kết nối server!"
+    });
+  }
+}

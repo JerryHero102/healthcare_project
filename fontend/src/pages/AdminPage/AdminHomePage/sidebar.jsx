@@ -14,6 +14,11 @@ const Sidebar = ({ getNavClasses, setContext, context }) => {
                 <div className={getNavClasses("Thông tin cá nhân")} onClick={() => setContext("Thông tin cá nhân")}>Thông tin cá nhân</div>
                 <div className={getNavClasses("Thêm thông tin nhân viên")} onClick={() => setContext("Thêm thông tin nhân viên")}>Thêm thông tin nhân viên</div>
             </div>
+            {/* QUẢN TRỊ HỆ THỐNG */}
+            <div className={'w-full rounded-md ' + (context === 'Thông tin cá nhân' ? 'bg-[#FFF4D6]' : '')}>
+                <div className={getNavClasses("Quản lý tài khoản")} onClick={() => setContext("Quản lý tài khoản")}>Quản lý tài khoản</div>
+                <div className={getNavClasses("Quản lý nhân viên")} onClick={() => setContext("Quản lý nhân viên")}>Quản lý nhân viên</div>
+            </div>
 
             {/* DÀNH CHO TIẾP TÂN */}
             <div className={'w-full rounded-md ' + (["Thêm BN mới", "Danh sách BN"].includes(context) ? 'bg-[#FFF4D6]' : '')}>
