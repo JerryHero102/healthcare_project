@@ -43,7 +43,6 @@ CREATE TABLE work_information_doctor (
   FOREIGN KEY (doctor_nurse_id) REFERENCES infor_doctor_nurse(doctor_nurse_id)
 );
 
-DROP TABLE work_information_doctor
 
 
 ------/////BẢNG Lịch của BÁC SĨ //////--------
@@ -86,6 +85,6 @@ CREATE TABLE schadule_patient(
   FOREIGN key (doctor_nurse_id) REFERENCES infor_doctor_nurse(doctor_nurse_id)
 );
 
-
-
+--9:00AM-11/11 update coulum
+ALTER TABLE work_schedule_list_doctor ADD column work_shift time; 
 
