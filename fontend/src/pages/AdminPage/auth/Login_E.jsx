@@ -1,9 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import Typography from '@/components/ui/Typography.jsx';
-import Label from '@/components/ui/label.jsx';
-import Input from '@/components/ui/input.jsx';
-import Button from '@/components/ui/button.jsx';
 import { useNavigate } from 'react-router-dom'; // Sử dụng để điều hướng sau khi đăng nhập
 
 const Login_E = () => {
@@ -23,7 +19,6 @@ const Login_E = () => {
 
             if (res.data?.token) {
                 localStorage.setItem('token', res.data.token);
-                // store employeeId so Profile/E can fetch data
                 localStorage.setItem('employeeId', employeeId);
                 navigate('/Admin/Dashboard');
             } else {
@@ -42,15 +37,15 @@ const Login_E = () => {
         <div className="min-h-screen flex items-center justify-center bg-bg-basic">
             <form onSubmit={handleLogin} className="w-80 border border-border-base rounded-md p-2.5">
                {/* Sử dụng H1: Tiêu đề lớn nhất */}
-                <Typography variant="h1" className="flex item-center justify-center">Đăng nhập</Typography>
+                <h1 variant="h1" className="flex item-center justify-center">Đăng nhập</h1>
                 {/* MÃ nhân viên */}
                 <div className='mt-4'>
-                    <Label 
+                    <label 
                         htmlFor="employee_id">
                         Mã nhân viên *
-                    </Label>
+                    </label>
 
-                    <Input
+                    <input
                         type="text"
                         id="employee_id"
                         name="employee_id"
@@ -62,12 +57,12 @@ const Login_E = () => {
                 </div>
                 {/* Mật khẩu */}
                 <div className='mt-4'>
-                    <Label 
+                    <label 
                         htmlFor="password"
                         >Mật khẩu *
-                    </Label>
+                    </label>
                     
-                    <Input
+                    <input
                         type="password"
                         id="password"
                         name="password"

@@ -7,7 +7,7 @@ const ActionButton = ({ children, colorClass, onClick }) => (
     </button>
 );
 
-const QL_Quy = ({ setContext }) => {
+const Found_Management = ({ setContext }) => {
     // Dữ liệu mẫu (Sample Data)
     const soDuHienTai = "1,540,000,000 VND";
     const cacGiaoDich = [
@@ -128,4 +128,4 @@ const QL_Quy = ({ setContext }) => {
     );
 };
 
-export default QL_Quy;
+export default Found_Management;
