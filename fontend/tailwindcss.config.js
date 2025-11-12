@@ -7,7 +7,6 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // map custom CSS variables so you can use classes like 'bg-primary' or 'text-primary'
         primary: 'var(--color-primary)',
         'primary-hover': 'var(--color-primary-hover)'
       }
