@@ -1,4 +1,4 @@
-import Header from '../../Home/Header';
+import Header from '../../HeaderUser.jsx';
 import Footer from '../../Home/Footer';
 import styles from './KhamTongQuat.module.css';
 
@@ -70,7 +70,7 @@ const KhamTongQuat = () => {
               tận tâm và chính xác nhất – giúp bạn chủ động trong việc chăm sóc và bảo vệ sức khỏe của bản thân 
               cũng như những người thân yêu.
             </p>
-            <a href="/dat-lich-hen">
+            <a href="/User/HomePage/dat-lich-hen">
               <button className={styles.commitButton}>Đặt lịch ngay</button>
             </a>
           </div>

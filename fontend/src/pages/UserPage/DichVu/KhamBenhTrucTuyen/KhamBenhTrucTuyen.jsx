@@ -1,4 +1,4 @@
-import Header from '../../Home/Header';
+import Header from '../../HeaderUser.jsx';
 import Footer from '../../Home/Footer';
 import styles from './KhamBenhTrucTuyen.module.css';
 
@@ -70,7 +70,7 @@ const KhamBenhTrucTuyen = () => {
               giúp người dân tiếp cận dịch vụ y tế chất lượng một cách nhanh chóng, 
               tiện lợi và bảo mật. Sức khỏe của bạn – trách nhiệm của chúng tôi.
             </p>
-            <a href="/dat-lich-hen">
+            <a href="/User/HomePage/dat-lich-hen">
               <button className={styles.commitButton}>Đặt lịch ngay</button>
             </a>
           </div>

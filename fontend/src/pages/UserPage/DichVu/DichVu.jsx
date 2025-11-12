@@ -1,4 +1,4 @@
-import Header from '../Home/Header';
+import Header from '../HeaderUser.jsx';
 import Footer from '../Home/Footer';
 import styles from './DichVu.module.css';
 
@@ -70,12 +70,12 @@ const DichVu = () => {
         <p className={styles.servicePrice}>{service.price}</p>
 
         <div className={styles.buttonGroup}>
-          <a href={`/${service.slug}`}>
+          <a href={`/User/HomePage/${service.slug}`}>
             <button className={styles.detailButton}>
               Xem chi tiết
             </button>
           </a>
-          <a href="/dat-lich-hen">
+          <a href="/User/HomePage/dat-lich-hen">
             <button className={styles.serviceButton}>
               Đặt lịch ngay
             </button>
@@ -145,7 +145,7 @@ const DichVu = () => {
                     </li>
                   ))}
                 </ul>
-                <a href="/dat-lich-hen">
+                <a href="/User/HomePage/dat-lich-hen">
                   <button className={pkg.popular ? styles.packageButtonPopular : styles.packageButton}>
                     Chọn gói này
                   </button>
@@ -180,7 +180,7 @@ const DichVu = () => {
         <section className={styles.ctaSection}>
           <h3 className={styles.ctaTitle}>Sẵn sàng chăm sóc sức khỏe của bạn?</h3>
           <p className={styles.ctaSubtitle}>Đặt lịch ngay hôm nay để nhận ưu đãi đặc biệt</p>
-          <a href="/dat-lich-hen">
+          <a href="/User/HomePage/dat-lich-hen">
             <button className={styles.ctaButton}>
               Đặt lịch ngay
             </button>

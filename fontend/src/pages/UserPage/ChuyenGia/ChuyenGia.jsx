@@ -1,4 +1,4 @@
-import Header from '../Home/Header';
+import Header from '../HeaderUser.jsx';
 import Footer from '../Home/Footer';
 import styles from './ChuyenGia.module.css';
 
