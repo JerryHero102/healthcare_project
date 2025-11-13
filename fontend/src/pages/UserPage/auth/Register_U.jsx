@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 const Inputs = (props) => (
   <input
@@ -12,6 +13,7 @@ const Inputs = (props) => (
 );
 
 const Register_U = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     full_name: "",
     date_of_birth: "",
@@ -38,6 +40,10 @@ const Register_U = () => {
 
     console.log("Dữ liệu gửi đi:", formData);
     // TODO: Gọi API POST để lưu vào bảng auth_users và information_user
+    alert("Đăng ký thành công! Vui lòng đăng nhập để tiếp tục.");
+
+    // ✅ Sau khi đăng ký thành công, quay về trang đăng nhập
+    navigate('/User/Login');
   };
 
   return (

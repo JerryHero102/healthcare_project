@@ -1,4 +1,4 @@
-import Header from '../HeaderUser.jsx';
+import Header from '../Home/Header';
 import Footer from '../Home/Footer';
 import styles from './MaySieuAm5D.module.css';
 
@@ -70,7 +70,7 @@ const MaySieuAm5D = () => {
             <p className={styles.contactText}>
               Hãy liên hệ với chúng tôi để được tư vấn chi tiết và đặt lịch khám nhanh chóng.
             </p>
-            <a href="/User/HomePage/dat-lich-hen"><button className={styles.contactButton}>Liên hệ ngay</button></a>
+            <a href="/dat-lich-hen"><button className={styles.contactButton}>Liên hệ ngay</button></a>
           </div>
         </section>
       </div>

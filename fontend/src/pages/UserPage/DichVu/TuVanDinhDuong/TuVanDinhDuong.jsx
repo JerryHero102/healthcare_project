@@ -1,4 +1,4 @@
-import Header from '../../HeaderUser.jsx';
+import Header from '../../Home/Header';
 import Footer from '../../Home/Footer';
 import styles from './TuVanDinhDuong.module.css';
 
@@ -70,7 +70,7 @@ const TuVanDinhDuong = () => {
               khoa học và dễ áp dụng. Mục tiêu của chúng tôi là giúp bạn đạt được sức khỏe 
               bền vững, vóc dáng cân đối và tinh thần tràn đầy năng lượng mỗi ngày.
             </p>
-            <a href="/User/HomePage/dat-lich-hen">
+            <a href="/dat-lich-hen">
               <button className={styles.commitButton}>Đặt lịch ngay</button>
             </a>
           </div>

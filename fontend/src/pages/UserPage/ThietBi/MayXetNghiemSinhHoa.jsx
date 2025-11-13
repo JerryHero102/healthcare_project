@@ -1,4 +1,4 @@
-import Header from '../HeaderUser.jsx';
+import Header from '../Home/Header';
 import Footer from '../Home/Footer';
 import styles from './MayXetNghiemSinhHoa.module.css';
 
@@ -69,7 +69,7 @@ const MayXetNghiemSinhHoa = () => {
             <p className={styles.contactText}>
               Đội ngũ kỹ thuật viên và bác sĩ của chúng tôi sẵn sàng hỗ trợ, đảm bảo quy trình nhanh chóng và an toàn nhất.
             </p>
-            <a href="/User/HomePage/dat-lich-hen"><button className={styles.contactButton}>Liên hệ ngay</button></a>
+            <a href="/dat-lich-hen"><button className={styles.contactButton}>Liên hệ ngay</button></a>
           </div>
         </section>
       </div>

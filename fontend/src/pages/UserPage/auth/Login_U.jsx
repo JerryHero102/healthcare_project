@@ -11,12 +11,17 @@ const Login_U = () => {
         event.preventDefault();
 
         // TẠM THỜI ĐIỀU HƯỚNG TĨNH
-        navigate('/User/HomePage', { replace: true });
+        navigate('/', { replace: true });
 
         // Gợi ý sau này: gọi API xác thực user
         // const phone = event.target.elements.phone_number.value;
         // const password = event.target.elements.password.value;
         // console.log("Đăng nhập user:", phone, password);
+    };
+
+    const handleRegister = () => {
+        // Điều hướng đến trang đăng ký người dùng
+        navigate('/User/Register');
     };
 
     return (
@@ -54,6 +59,7 @@ const Login_U = () => {
                         />
                     </div>
 
+                    {/* Nút đăng nhập */}
                     <div className='flex item-center justify-center mt-4'>
                         <Button 
                             type="submit"
@@ -61,10 +67,22 @@ const Login_U = () => {
                             Đăng nhập
                         </Button>
                     </div>
+
+                    {/* Liên kết đăng ký */}
+                    <div className='flex items-center justify-center mt-3'>
+                        <Typography variant="body2">
+                            Chưa có tài khoản?{' '}
+                            <span 
+                                onClick={handleRegister} 
+                                className='text-purple-600 hover:text-purple-400 cursor-pointer font-medium'>
+                                Đăng ký ngay
+                            </span>
+                        </Typography>
+                    </div>
                 </form>
             </div>
         </div>
-    )
+    );
 }
 
 export default Login_U;

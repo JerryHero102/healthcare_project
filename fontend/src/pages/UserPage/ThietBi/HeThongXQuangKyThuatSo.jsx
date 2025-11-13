@@ -1,4 +1,4 @@
-import Header from '../HeaderUser.jsx';
+import Header from '../Home/Header';
 import Footer from '../Home/Footer';
 import styles from './HeThongXQuangKyThuatSo.module.css';
 
@@ -70,7 +70,7 @@ const HeThongXQuangKyThuatSo = () => {
             <p className={styles.contactText}>
               Liên hệ ngay với chúng tôi để được tư vấn và đặt lịch chụp X-Quang kỹ thuật số nhanh chóng, chính xác và an toàn.
             </p>
-            <a href="/User/HomePage/dat-lich-hen"><button className={styles.contactButton}>Liên hệ ngay</button></a>
+            <a href="/dat-lich-hen"><button className={styles.contactButton}>Liên hệ ngay</button></a>
           </div>
         </section>
       </div>

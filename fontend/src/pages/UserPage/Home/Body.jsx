@@ -82,12 +82,12 @@ const Body = () => {
                 <h2 className={styles.bannerTitle}>{slide.title}</h2>
                 <p className={styles.bannerSubtitle}>{slide.subtitle}</p>
                 <div className={styles.bannerButtons}>
-                  <a href="/User/HomePage/dat-lich-hen">
+                  <a href="/dat-lich-hen">
                     <button className={styles.bannerButton}>
                       Đặt lịch ngay
                     </button>
                   </a>
-                  <a href="/User/HomePage/dich-vu">
+                  <a href="/dich-vu">
                     <button className={styles.bannerButtonSecondary}>
                       Khám phá các dịch vụ
                     </button>
@@ -140,7 +140,7 @@ const Body = () => {
     ].map((service, index) => (
       <a 
         key={index} 
-        href={`/User/HomePage/${service.slug}`} 
+        href={`/${service.slug}`} 
         className={styles.serviceCard}
       >
         <h4 className={styles.serviceTitle}>{service.name}</h4>
@@ -201,7 +201,7 @@ const Body = () => {
     ].map((tool, index) => (
       <a
         key={index}
-        href={`/User/HomePage/${tool.slug}`}
+        href={`/${tool.slug}`}
         className={styles.equipmentCard}
       >
         <h4 className={styles.equipmentName}>{tool.name}</h4>
@@ -224,25 +224,25 @@ const Body = () => {
         icon: "🏥", 
         title: "Khám tổng quát", 
         desc: "Khám sức khỏe toàn diện với bác sĩ giàu kinh nghiệm",
-        link: "/User/HomePage/kham-suc-khoe-tong-quat"
+        link: "/kham-suc-khoe-tong-quat"
       },
       { 
         icon: "🔬", 
         title: "Xét nghiệm", 
         desc: "Xét nghiệm máu, nước tiểu với thiết bị hiện đại",
-        link: "/User/HomePage/xet-nghiem-tai-nha"
+        link: "/xet-nghiem-tai-nha"
       },
       { 
         icon: "🏃", 
         title: "Phục hồi chức năng", 
         desc: "Vật lý trị liệu, phục hồi sau chấn thương và bệnh lý",
-        link: "/User/HomePage/phuc-hoi-chuc-nang"
+        link: "/phuc-hoi-chuc-nang"
       },
       { 
         icon: "🥗", 
         title: "Tư vấn dinh dưỡng", 
         desc: "Chế độ ăn uống khoa học phù hợp với tình trạng sức khỏe",
-        link: "/User/HomePage/tu-van-dinh-duong"
+        link: "/tu-van-dinh-duong"
       }
     ].map((service, index) => (
       <a 
@@ -258,7 +258,7 @@ const Body = () => {
   </div>
 
   <div className={styles.discoverButtonContainer}>
-    <a href="/User/HomePage/dich-vu">
+    <a href="/dich-vu">
       <button className={styles.discoverButton}>
         Xem tất cả dịch vụ →
       </button>

@@ -1,4 +1,4 @@
-import Header from '../../HeaderUser.jsx';
+import Header from '../../Home/Header';
 import Footer from '../../Home/Footer';
 import styles from './ChamSocTaiNha.module.css';
 
@@ -58,7 +58,7 @@ const ChamSocTaiNha = () => {
               Dịch vụ chăm sóc tại nhà cam kết mang đến trải nghiệm y tế an toàn, tận tâm và hiệu quả – 
               giúp bạn và người thân yên tâm ngay tại chính ngôi nhà của mình.
             </p>
-            <a href="/User/HomePage/dat-lich-hen">
+            <a href="/dat-lich-hen">
               <button className={styles.commitButton}>Đặt lịch ngay</button>
             </a>
           </div>

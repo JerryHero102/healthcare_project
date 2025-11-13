@@ -1,4 +1,4 @@
-import Header from '../../HeaderUser.jsx';
+import Header from '../../Home/Header';
 import Footer from '../../Home/Footer';
 import styles from './XetNghiemTaiNha.module.css';
 
@@ -80,7 +80,7 @@ const XetNghiemTaiNha = () => {
               an toàn và đảm bảo tiêu chuẩn y khoa cao nhất. Mọi mẫu xét nghiệm đều được 
               xử lý bởi hệ thống phòng lab hiện đại, kết quả được bảo mật tuyệt đối.
             </p>
-            <a href="/User/HomePage/dat-lich-hen">
+            <a href="/dat-lich-hen">
               <button className={styles.commitButton}>Đặt lịch ngay</button>
             </a>
           </div>

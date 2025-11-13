@@ -1,4 +1,4 @@
-import Header from '../HeaderUser.jsx';
+import Header from '../Home/Header';
 import Footer from '../Home/Footer';
 import styles from './ChuyenKhoa.module.css';
 

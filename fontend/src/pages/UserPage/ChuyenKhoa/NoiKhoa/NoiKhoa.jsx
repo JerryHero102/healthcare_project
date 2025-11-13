@@ -1,4 +1,4 @@
-import Header from '../../HeaderUser.jsx';
+import Header from '../../Home/Header';
 import Footer from '../../Home/Footer';
 import styles from './NoiKhoa.module.css';
 
@@ -40,7 +40,7 @@ const NoiKhoa = () => {
                 <h4 className={styles.doctorName}>{doctor.name}</h4>
                 <p className={styles.doctorTitle}>{doctor.title}</p>
                 <p className={styles.doctorDesc}>{doctor.desc}</p>
-                <a href="/User/HomePage/dat-lich-hen"><button className={styles.doctorButton}>Đặt lịch khám</button></a>
+                <a href="/dat-lich-hen"><button className={styles.doctorButton}>Đặt lịch khám</button></a>
               </div>
             ))}
           </div>
@@ -55,7 +55,7 @@ const NoiKhoa = () => {
               Với quy trình khám chữa bệnh chuyên nghiệp, nhanh chóng và chính xác, 
               chuyên khoa cam kết mang đến sự chăm sóc tận tâm và hiệu quả.
             </p>
-            <a href="/User/HomePage/dat-lich-hen"><button className={styles.commitButton}>Liên hệ ngay</button></a>
+            <a href="/dat-lich-hen"><button className={styles.commitButton}>Liên hệ ngay</button></a>
           </div>
         </section>
       </div>
