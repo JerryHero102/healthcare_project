@@ -64,6 +64,10 @@ const Employees_Management = () => {
         <div className="ml-auto text-sm text-gray-600">Tổng: {filtered.length}</div>
       </div>
 
+      <div>
+        <button type='button' className='cursor-pointer btn-primary text-small px-4 mb-4'>+ Thêm</button>
+      </div>
+      
       <div className="bg-white rounded shadow overflow-auto">
         <table className="min-w-full table-auto">
           <thead>

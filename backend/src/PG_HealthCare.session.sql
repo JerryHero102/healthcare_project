@@ -113,6 +113,42 @@ DROP TABLE IF EXISTS infor_users CASCADE;
 DROP TABLE IF EXISTS list_position CASCADE;
 DROP TABLE IF EXISTS list_department CASCADE;
 
+
+------------------------
+-- Bảng xác thực khách hàng (login)
+------------------------
+CREATE TABLE infor_auth_user (
+  infor_auth_user_id SERIAL PRIMARY KEY,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+-- -----------------------
+-- Bảng xác thực nhân viên (login employee)
+-- Lưu ý: employee_id ở đây map tới infor_employee.infor_employee_id
+-- -----------------------
+CREATE TABLE infor_auth_employee (
+  infor_auth_employee_id SERIAL PRIMARY KEY,       -- map đến infor_employee.infor_employee_id
+  password_employee VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- -----------------------
+-- Thông tin chung (khách hàng / nhân viên)
+-- -----------------------
+CREATE TABLE infor_users (
+  infor_users_id SERIAL PRIMARY KEY,
+  infor_auth_user_id INT UNIQUE,
+  phone_number VARCHAR(10) UNIQUE,
+  card_id VARCHAR(12) UNIQUE,
+  full_name VARCHAR(100),
+  date_of_birth DATE,
+  gender INT,
+  permanent_address VARCHAR(255),
+  current_address VARCHAR(255),
+  CONSTRAINT fk_authuser_phone FOREIGN KEY (infor_auth_user_id) REFERENCES infor_auth_user(infor_auth_user_id) ON DELETE CASCADE
+);
+
+
 -- -----------------------
 -- Danh sách phòng ban
 -- -----------------------
@@ -135,28 +171,13 @@ CREATE TABLE list_position (
 insert into list_position (position_name,department_id)
 VALUES('Admin', 1)
 
-
--- -----------------------
--- Thông tin chung (khách hàng / nhân viên)
--- -----------------------
-CREATE TABLE infor_users (
-  infor_users_id SERIAL PRIMARY KEY,
-  phone_number VARCHAR(10) UNIQUE,
-  card_id VARCHAR(12) UNIQUE,
-  full_name VARCHAR(100),
-  date_of_birth DATE,
-  gender INT,
-  permanent_address VARCHAR(255),
-  current_address VARCHAR(255)
-);
-
-
 -- -----------------------
 -- Thông tin nhân viên (kế thừa infor_users)
 -- -----------------------
 CREATE TABLE infor_employee (
   infor_employee_id SERIAL PRIMARY KEY,
   infor_users_id INT UNIQUE NOT NULL,
+  infor_auth_employee INT UNIQUE NOT NULL,
   position_id INT,                 -- FK tới list_position.position_id
   department_id INT,               -- FK tới list_department.department_id (tiện cho lookup nhanh)
   business VARCHAR(200),           -- chi nhánh / cơ sở
@@ -166,6 +187,7 @@ CREATE TABLE infor_employee (
   attached INT,                    -- gắn bó (số tháng/năm - tuỳ bạn interpret)
   status_employee VARCHAR(20) DEFAULT 'active',
   CONSTRAINT fk_employee_user FOREIGN KEY (infor_users_id) REFERENCES infor_users(infor_users_id) ON DELETE CASCADE,
+  CONSTRAINT fk_auth_employee FOREIGN key (infor_auth_employee) REFERENCES infor_auth_employee(infor_auth_employee_id) ON DELETE CASCADE,
   CONSTRAINT fk_employee_position FOREIGN KEY (position_id) REFERENCES list_position(position_id) ON DELETE SET NULL,
   CONSTRAINT fk_employee_department FOREIGN KEY (department_id) REFERENCES list_department(department_id) ON DELETE SET NULL
 );
@@ -243,40 +265,51 @@ CREATE TABLE schadule_patient_with_doctor (
   CONSTRAINT fk_spwd_user FOREIGN KEY (infor_users_id) REFERENCES infor_users(infor_users_id) ON DELETE CASCADE
 );
 
--- -----------------------
--- Bảng xác thực khách hàng (login)
--- -----------------------
-CREATE TABLE infor_auth_user (
-  infor_auth_user_id SERIAL PRIMARY KEY,
-  phone_number VARCHAR(10) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_authuser_phone FOREIGN KEY (phone_number) REFERENCES infor_users(phone_number) ON DELETE CASCADE
-);
 
--- -----------------------
--- Bảng xác thực nhân viên (login employee)
--- Lưu ý: employee_id ở đây map tới infor_employee.infor_employee_id
--- -----------------------
-CREATE TABLE infor_auth_employee (
-  infor_auth_employee_id SERIAL PRIMARY KEY,
-  employee_id INT UNIQUE NOT NULL,         -- map đến infor_employee.infor_employee_id
-  password_employee VARCHAR(255) NOT NULL,
-  position VARCHAR(100),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  CONSTRAINT fk_authemployee_employee FOREIGN KEY (employee_id) REFERENCES infor_employee(infor_employee_id) ON DELETE CASCADE
-);
-
--- -----------------------
--- Index tối ưu (nếu cần)
--- -----------------------
-CREATE INDEX idx_users_cardid ON infor_users(card_id);
-CREATE INDEX idx_medical_cardid ON infor_medical_users(card_id);
-CREATE INDEX idx_employee_userid ON infor_employee(infor_users_id);
-CREATE INDEX idx_schedule_emp ON schedule_employee(infor_employee_id);
+-- -- -----------------------
+-- -- Index tối ưu (nếu cần)
+-- -- -----------------------
+-- CREATE INDEX idx_users_cardid ON infor_users(card_id);
+-- CREATE INDEX idx_medical_cardid ON infor_medical_users(card_id);
+-- CREATE INDEX idx_employee_userid ON infor_employee(infor_users_id);
+-- CREATE INDEX idx_schedule_emp ON schedule_employee(infor_employee_id);
 
 --Timeline: 03:00 AM: Cập nhật lại toàn bộ bảng, thêm bảng, xoá bảng...
 --Sử dụng bảng auth_user cho đăng nhập khách hàng (map tham chiếu với phone_number)
 --Sử dụng bảng auth_employee cho đăng nhập nhân viên (map tham chiếu với employee)
 
-DROP TABLE IF EXISTS shedule_doctor CASCADE;
+select * FROM infor_auth_employee
+select * from infor_auth_user
+select * from infor_employee
+select * from infor_users
+select * from list_department
+select * from list_position
+
+SELECT 
+        iae.infor_auth_employee_id, 
+        ie.infor_employee_id, 
+        iu.full_name, --user
+        ld.department_name, 
+        pn.position_name,  
+        iae.created_at,
+        ie.status_employee 
+      FROM infor_employee ie
+      JOIN infor_users iu ON ie.infor_users_id = iu.infor_users_id
+      LEFT JOIN infor_auth_employee iae on ie.infor_auth_employee = iae.infor_auth_employee_id
+      LEFT JOIN list_department ld ON ie.department_id = ld.department_id
+      LEFT JOIN list_position pn ON ie.position_id = pn.position_id
+      ORDER BY iu.full_name ASC;
+
+SELECT
+      iu.infor_users_id,
+      iu.phone_number,
+      iu.full_name,
+      iu.date_of_birth,
+      iu.gender,
+      iu.permanent_address,
+      iu.current_address,
+      iau.created_at
+    FROM infor_users iu
+    JOIN infor_auth_user iau on iu.infor_auth_user_id = iau.infor_auth_user_id
+    ORDER BY iu.full_name ASC;
+
