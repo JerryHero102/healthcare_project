@@ -28,10 +28,10 @@ import Login_U from './pages/UserPage/auth/Login_U';
 import Register_U from './pages/UserPage/auth/Register_U';
 // ADMIN PAGES
 import DashBoard from './pages/AdminPage/AdminHomePage/DashBoard';
-import Login_E from './pages/AdminPage/Auth/Login_E';
-import Register_E from './pages/AdminPage/Auth/Register_E';
+import Login_E from './pages/AdminPage/auth/Login_E';
+import Register_E from './pages/AdminPage/auth/Register_E';
 import ProtectedRoute from './components/ProtectedRoute';
-import UpdateProfile_E from './pages/AdminPage/Auth/UpdateProfile_E';
+import UpdateProfile_E from './pages/AdminPage/auth/UpdateProfile_E';
 // NOT FOUND PAGE 
 import NotFound from './pages/NotFound.jsx';
 
@@ -61,7 +61,7 @@ function App() {
         <Route path="/chan-doan-hinh-anh" element={<ChanDoanHinhAnh />} />
         {/* Trang xét nghiệm sinh hóa */}
         <Route path="/xet-nghiem-sinh-hoa" element={<XetNghiemSinhHoa />} />
-ọ
+
         {/* Trang máy siêu âm */}
         <Route path="/may-sieu-am-5d" element={<MaySieuAm5D />} />
         {/* Trang máy xét nghiệm sinh hóa */}

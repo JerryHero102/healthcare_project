@@ -1,17 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-
-const Inputs = (props) => (
-  <input
-    {...props}
-    className={`border-[1px] border-gray-300 rounded-md font-normal px-2 py-1 focus:border-[#e6b800] focus:ring-[#e6b800] transition
-      ${props.disabled
-        ? "bg-gray-100 text-gray-500 cursor-not-allowed border-gray-300"
-        : ""
-      } ${props.className || ""}`}
-  />
-);
+import { useNavigate, Link } from 'react-router-dom';
+import Input from '@/components/ui/input.jsx';
+import Label from '@/components/ui/label.jsx';
+import Button from '@/components/ui/button.jsx';
+import { User, Mail, Phone, Calendar, MapPin, Lock, CreditCard, Home, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 
 const Register_U = () => {
   const navigate = useNavigate();
@@ -27,18 +19,60 @@ const Register_U = () => {
     confirmPassword: ""
   });
 
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors({ ...errors, [name]: '' });
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.full_name.trim()) {
+      newErrors.full_name = "Vui lòng nhập họ và tên";
+    }
+
+    if (!formData.date_of_birth) {
+      newErrors.date_of_birth = "Vui lòng chọn ngày sinh";
+    }
+
+    if (!formData.phone_number.trim()) {
+      newErrors.phone_number = "Vui lòng nhập số điện thoại";
+    } else if (!/^[0-9]{10,11}$/.test(formData.phone_number)) {
+      newErrors.phone_number = "Số điện thoại không hợp lệ";
+    }
+
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Email không hợp lệ";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Vui lòng nhập mật khẩu";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+    }
+
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Vui lòng nhập lại mật khẩu";
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Mật khẩu nhập lại không khớp";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.password !== formData.confirmPassword) {
-      alert("❌ Mật khẩu nhập lại không khớp!");
+    if (!validateForm()) {
       return;
     }
 
@@ -85,137 +119,283 @@ const Register_U = () => {
   };
 
   return (
-    <div className="p-4 max-w-3xl mx-auto">
-      <form onSubmit={handleSubmit} className="mb-8">
-        <h2 className="text-xl font-semibold mb-4">Thông tin cá nhân</h2>
-        <div className="w-full flex gap-4 mb-4">
-          <div className="w-2/3">
-            <h6>Họ và Tên</h6>
-            <Inputs
-              className="w-full"
-              type="text"
-              name="full_name"
-              value={formData.full_name}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="w-1/3">
-            <h6>Ngày sinh</h6>
-            <Inputs
-              className="w-full"
-              type="date"
-              name="date_of_birth"
-              value={formData.date_of_birth}
-              onChange={handleChange}
-              required
-            />
-          </div>
-        </div>
-
-        <div className="w-full flex gap-4 mb-4">
-          <div className="w-1/2">
-            <h6>Số điện thoại</h6>
-            <Inputs
-              className="w-full"
-              type="text"
-              name="phone_number"
-              value={formData.phone_number}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="w-1/2">
-            <h6>Email</h6>
-            <Inputs
-              className="w-full"
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
-        <div className="w-full flex gap-4 mb-4">
-          <div className="w-1/2">
-            <h6>CMND / CCCD</h6>
-            <Inputs
-              className="w-full"
-              type="text"
-              name="card_id"
-              value={formData.card_id}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="w-1/2">
-            <h6>Địa chỉ hiện tại</h6>
-            <Inputs
-              className="w-full"
-              type="text"
-              name="current_address"
-              value={formData.current_address}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
-        <div className="w-full flex gap-4 mb-4">
-          <div className="w-1/2">
-            <h6>Địa chỉ thường trú</h6>
-            <Inputs
-              className="w-full"
-              type="text"
-              name="permanent_address"
-              value={formData.permanent_address}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-
-        <div className="w-full flex gap-4">
-          <div className="w-1/2">
-            <h6>Mật khẩu</h6>
-            <Inputs
-              className="w-full"
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="w-1/2">
-            <h6>Nhập lại mật khẩu</h6>
-            <Inputs
-              className="w-full"
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-            />
-          </div>
-        </div>
-
-        <div>
-          <button
-            type="submit"
-            disabled={loading}
-            className={`bg-[#e6b800] text-white cursor-pointer float-end px-4 py-2 rounded-md mt-8 hover:bg-[#ccac00] transition ${
-              loading ? "opacity-60 cursor-not-allowed" : ""
-            }`}
+    <div className="min-h-screen bg-gradient-to-br from-[#E3FFF8] via-[#EDFFFA] to-[#F0F9FF] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl w-full">
+        {/* Nút Trở lại */}
+        <div className="mb-6">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-[#2C3E50] hover:text-[#FFC419] transition-colors font-medium"
           >
-            {loading ? "Đang xử lý..." : "Đăng ký tài khoản"}
-          </button>
+            <ArrowLeft className="w-5 h-5" />
+            <span>Trở về trang chủ</span>
+          </Link>
         </div>
 
-        {message && (
-          <p className={`mt-4 text-center text-sm ${message.startsWith("✅") ? "text-green-600" : "text-red-600"}`}>
-            {message}
-          </p>
-        )}
-      </form>
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-[#2C3E50] mb-2">Đăng ký tài khoản</h1>
+          <p className="text-gray-600">Tạo tài khoản để sử dụng dịch vụ chăm sóc sức khỏe</p>
+        </div>
+
+        {/* Form Card */}
+        <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Section 1: Thông tin cơ bản */}
+            <div>
+              <h2 className="text-xl font-semibold text-[#2C3E50] mb-6 flex items-center gap-2">
+                <User className="w-5 h-5 text-[#FFC419]" />
+                Thông tin cá nhân
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Họ và Tên */}
+                <div className="md:col-span-2">
+                  <Label htmlFor="full_name">
+                    Họ và Tên <span className="text-red-500">*</span>
+                  </Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Input
+                      id="full_name"
+                      name="full_name"
+                      type="text"
+                      value={formData.full_name}
+                      onChange={handleChange}
+                      placeholder="Nhập họ và tên đầy đủ"
+                      className={`pl-10 ${errors.full_name ? 'border-red-500' : ''}`}
+                      required
+                    />
+                  </div>
+                  {errors.full_name && (
+                    <p className="text-red-500 text-sm mt-1">{errors.full_name}</p>
+                  )}
+                </div>
+
+                {/* Ngày sinh */}
+                <div>
+                  <Label htmlFor="date_of_birth">
+                    Ngày sinh <span className="text-red-500">*</span>
+                  </Label>
+                  <div className="relative">
+                    <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                    <Input
+                      id="date_of_birth"
+                      name="date_of_birth"
+                      type="date"
+                      value={formData.date_of_birth}
+                      onChange={handleChange}
+                      className={`pl-10 ${errors.date_of_birth ? 'border-red-500' : ''}`}
+                      required
+                    />
+                  </div>
+                  {errors.date_of_birth && (
+                    <p className="text-red-500 text-sm mt-1">{errors.date_of_birth}</p>
+                  )}
+                </div>
+
+                {/* Số điện thoại */}
+                <div>
+                  <Label htmlFor="phone_number">
+                    Số điện thoại <span className="text-red-500">*</span>
+                  </Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Input
+                      id="phone_number"
+                      name="phone_number"
+                      type="tel"
+                      value={formData.phone_number}
+                      onChange={handleChange}
+                      placeholder="2005"
+                      className={`pl-10 ${errors.phone_number ? 'border-red-500' : ''}`}
+                      required
+                    />
+                  </div>
+                  {errors.phone_number && (
+                    <p className="text-red-500 text-sm mt-1">{errors.phone_number}</p>
+                  )}
+                </div>
+
+                {/* Email */}
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="abc@xyz.com"
+                      className={`pl-10 ${errors.email ? 'border-red-500' : ''}`}
+                    />
+                  </div>
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                  )}
+                </div>
+
+                {/* CMND/CCCD */}
+                <div>
+                  <Label htmlFor="card_id">CMND / CCCD</Label>
+                  <div className="relative">
+                    <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Input
+                      id="card_id"
+                      name="card_id"
+                      type="text"
+                      value={formData.card_id}
+                      onChange={handleChange}
+                      placeholder="Nhập số CMND/CCCD"
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 2: Địa chỉ */}
+            <div className="pt-6 border-t border-gray-200">
+              <h2 className="text-xl font-semibold text-[#2C3E50] mb-6 flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-[#FFC419]" />
+                Địa chỉ
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Địa chỉ hiện tại */}
+                <div>
+                  <Label htmlFor="current_address">Địa chỉ hiện tại</Label>
+                  <div className="relative">
+                    <Home className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                    <Input
+                      id="current_address"
+                      name="current_address"
+                      type="text"
+                      value={formData.current_address}
+                      onChange={handleChange}
+                      placeholder="Nhập địa chỉ hiện tại"
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+
+                {/* Địa chỉ thường trú */}
+                <div>
+                  <Label htmlFor="permanent_address">Địa chỉ thường trú</Label>
+                  <div className="relative">
+                    <Home className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+                    <Input
+                      id="permanent_address"
+                      name="permanent_address"
+                      type="text"
+                      value={formData.permanent_address}
+                      onChange={handleChange}
+                      placeholder="Nhập địa chỉ thường trú"
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 3: Mật khẩu */}
+            <div className="pt-6 border-t border-gray-200">
+              <h2 className="text-xl font-semibold text-[#2C3E50] mb-6 flex items-center gap-2">
+                <Lock className="w-5 h-5 text-[#FFC419]" />
+                Mật khẩu
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Mật khẩu */}
+                <div>
+                  <Label htmlFor="password">
+                    Mật khẩu <span className="text-red-500">*</span>
+                  </Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      value={formData.password}
+                      onChange={handleChange}
+                      placeholder="Tối thiểu 6 ký tự"
+                      className={`pl-10 pr-10 ${errors.password ? 'border-red-500' : ''}`}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                  {errors.password && (
+                    <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                  )}
+                </div>
+
+                {/* Nhập lại mật khẩu */}
+                <div>
+                  <Label htmlFor="confirmPassword">
+                    Nhập lại mật khẩu <span className="text-red-500">*</span>
+                  </Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Input
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      placeholder="Nhập lại mật khẩu"
+                      className={`pl-10 pr-10 ${errors.confirmPassword ? 'border-red-500' : ''}`}
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                  {errors.confirmPassword && (
+                    <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <div className="pt-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
+              <Link
+                to="/User/Login"
+                className="text-[#1E90FF] hover:text-[#0066CC] font-medium transition-colors"
+              >
+                Đã có tài khoản? 
+              </Link>
+              <Button
+                type="submit"
+                className="bg-[#FFC419] hover:bg-[#E6AE14] text-white font-semibold px-8 py-3 rounded-xl shadow-md transition-all w-full sm:w-auto"
+              >
+                Đăng ký tài khoản
+              </Button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };
