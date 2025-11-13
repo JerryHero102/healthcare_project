@@ -1,4 +1,4 @@
-import Header from '../Home/Header';
+import Header from '../HeaderUser.jsx';
 import Footer from '../Home/Footer';
 import styles from './MayNoiSoiTaiMuiHong.module.css';
 
@@ -70,7 +70,7 @@ const MayNoiSoiTaiMuiHong = () => {
             <p className={styles.contactText}>
               Liên hệ ngay để được tư vấn và đặt lịch khám với đội ngũ bác sĩ chuyên khoa Tai Mũi Họng giàu kinh nghiệm.
             </p>
-            <a href="/dat-lich-hen"><button className={styles.contactButton}>Liên hệ ngay</button></a>
+            <a href="/User/HomePage/dat-lich-hen"><button className={styles.contactButton}>Liên hệ ngay</button></a>
           </div>
         </section>
       </div>

@@ -1,4 +1,4 @@
-import Header from '../../Home/Header';
+import Header from '../../HeaderUser.jsx';
 import Footer from '../../Home/Footer';
 import styles from './PhucHoiChucNang.module.css';
 
@@ -70,7 +70,7 @@ const PhucHoiChucNang = () => {
               Chúng tôi cam kết mang đến chương trình phục hồi toàn diện, cá nhân hóa cho từng người bệnh, 
               giúp bạn nhanh chóng lấy lại khả năng vận động, tự tin hòa nhập cuộc sống và đạt được sức khỏe tối ưu.
             </p>
-            <a href="/dat-lich-hen">
+            <a href="/User/HomePage/dat-lich-hen">
               <button className={styles.commitButton}>Đặt lịch ngay</button>
             </a>
           </div>
