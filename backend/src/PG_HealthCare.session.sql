@@ -257,3 +257,12 @@ SELECT
       LEFT JOIN list_department d ON e.department_id = d.department_id
       WHERE e.infor_employee_id = $1
       LIMIT 1;
+
+      SELECT iu.infor_users_id, iu.phone_number, iau.password
+      FROM infor_users iu
+      JOIN infor_auth_user iau ON iu.infor_auth_user_id = iau.infor_auth_user_id
+
+       SELECT iu.infor_users_id, iu.phone_number, iu.full_name, iu.date_of_birth, iu.gender, iu.permanent_address, iu.current_address
+      FROM infor_users iu
+
+      DELETE FROM infor_users WHERE infor_users_id = 5

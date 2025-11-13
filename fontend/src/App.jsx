@@ -79,7 +79,7 @@ function App() {
         <Route path="/phuc-hoi-chuc-nang" element={<PhucHoiChucNang />} />
         <Route path="/kham-benh-truc-tuyen" element={<KhamBenhTrucTuyen />} />        
         {/*Trang thông tin cá nhân */}
-        <Route path="/Profile_u" element={<><Header /><Profile_u/></>} />
+        <Route path="/User/Profile_u" element={<><Header /><Profile_u/></>} />
         {/*Trang Login cho User */}
         <Route path='/User/Login' element={<Login_U/>}/>
         <Route path='/User/Register' element={<Register_U/>}/>
