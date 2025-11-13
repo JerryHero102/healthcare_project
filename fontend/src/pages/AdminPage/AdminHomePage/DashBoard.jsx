@@ -7,8 +7,8 @@ import Individual_Patient_Management from "../Doctor/Individual_Patient_Manageme
 import Test_Result from "../Doctor/Test_Result"; //Phiếu xét nghiệm
 import Work_Schedule from "../Doctor/Work_Schedule"; //Lịch làm việc của bác sĩ
 // BÁC SĨ XÉT NGHIỆM/ CHỤP PHIM....
-import Laboratory_Test_Report from "../DoctorOther/Laboratory_Test_Report"
-import Test_Result_Form from "../DoctorOther/Test_Result_Form"
+import Laboratory_Test_Report from "../DoctorOther/Laboratory_Test_Report";
+import Test_Result_Form from "../DoctorOther/Test_Result_Form";
 // HỆ THỐNG
 import Appointment_List from "../System/Appointment_List"; //Danh sách cuộc hẹn
 import Patient_List_Details from "../System/Patient_List_Details"; //Danh sách chi tiết thông tin bệnh nhân
@@ -16,11 +16,11 @@ import Patient_List_Details from "../System/Patient_List_Details"; //Danh sách 
 import Found_Management from "../Accounting/Fund_Management";
 import SalaryManagement from "../Accounting/SalaryManagement";
 //ĐĂNG NHẬP/ĐĂNG KÝ
-import Login_E from "../Auth/Login_E"; 
-import Register_E from "../Auth/Register_E"; 
-import Profile_E from "../Auth/Profile_E";
-import Add_Infor_E from "../Auth/Add_Infor_E";
-import UpdateProfile_E from "../Auth/UpdateProfile_E";
+import Login_E from "../auth/Login_E"; 
+import Register_E from "../auth/Register_E"; 
+import Profile_E from "../auth/Profile_E";
+import Add_Infor_E from "../auth/Add_Infor_E";
+import UpdateProfile_E from "../auth/UpdateProfile_E";
 //HOME PAGE
 import Sidebar from './sidebar';
 //ADMINSTATOR
