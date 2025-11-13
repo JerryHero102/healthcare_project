@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 ---------*/
 export const registerEmployee = async (req, res) => {
   const { employee_id, password, phone, card_id } = req.body;
-
+  //Timeline: Chuyển qua bảng auth_employee
   try {
     if (!password || !phone || !card_id) {
       return res.status(400).json({ error: "⚠️ Vui lòng nhập đầy đủ thông tin!" });
@@ -91,25 +91,48 @@ export const registerEmployee = async (req, res) => {
  LOGIN EMPLOYEE
 ---------*/
 export const loginEmployee = async (req, res) => {
-  const { employee_id, password } = req.body;
+  const { infor_auth_employee_id, password } = req.body;
 
   try {
-    // Truy vấn người dùng theo employee_id (đồng nhất với khi đăng ký)
-    const result = await db.query("SELECT * FROM infor_users WHERE employee_id = $1", [employee_id]);
+    // Truy vấn tài khoản theo infor_auth_employee_id
+    const result = await db.query(
+      "SELECT * FROM infor_auth_employee WHERE infor_auth_employee_id = $1",
+      [infor_auth_employee_id]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(400).json({ success: false, message: "Không tìm thấy tài khoản" });
+    }
+
     const user = result.rows[0];
 
-    if (!user) return res.status(400).json({ error: "Không tìm thấy tài khoản" });
+    // So sánh password nhập vào với password đã hash trong DB
+    const isMatch = await bcrypt.compare(password, user.password_employee);
+    if (!isMatch) {
+      return res.status(400).json({ success: false, message: "Sai mật khẩu" });
+    }
 
-    const isMatch = await bcrypt.compare(password, user.password); // So sánh password nhập vào với password đã băm trong cơ sở dữ liệu
-    if (!isMatch) return res.status(400).json({ error: "Sai mật khẩu" });
+    // Tạo JWT token
+    const token = jwt.sign(
+      { infor_auth_employee_id: user.infor_auth_employee_id, employee_id: user.employee_id },
+      process.env.JWT_SECRET || "SECRET_KEY",
+      { expiresIn: "1h" }
+    );
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET || "SECRET_KEY", { expiresIn: "1h" }); // Tạo JWT token
-    // Trả về cấu trúc thống nhất
-    res.json({ success: true, message: "Đăng nhập thành công", token });
+    res.json({
+      success: true,
+      message: "Đăng nhập thành công",
+      token,
+      user: {
+        infor_auth_employee_id: user.infor_auth_employee_id,
+        employee_id: user.employee_id,
+        position: user.position
+      }
+    });
 
   } catch (err) {
-
-    res.status(500).json({ error: "Đăng nhập thất bại" });
+    console.error(err);
+    res.status(500).json({ success: false, message: "Đăng nhập thất bại" });
   }
 };
 

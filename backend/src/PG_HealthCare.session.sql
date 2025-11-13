@@ -120,6 +120,8 @@ CREATE TABLE list_department (
   department_id SERIAL PRIMARY KEY,
   department_name VARCHAR(100) NOT NULL
 );
+INSERT INTO list_department (department_name) VALUES ('System');
+
 
 -- -----------------------
 -- Danh sách chức vụ
@@ -130,6 +132,9 @@ CREATE TABLE list_position (
   department_id INT,
   CONSTRAINT fk_position_department FOREIGN KEY (department_id) REFERENCES list_department(department_id) ON DELETE SET NULL
 );
+insert into list_position (position_name,department_id)
+VALUES('Admin', 1)
+
 
 -- -----------------------
 -- Thông tin chung (khách hàng / nhân viên)
@@ -144,6 +149,7 @@ CREATE TABLE infor_users (
   permanent_address VARCHAR(255),
   current_address VARCHAR(255)
 );
+
 
 -- -----------------------
 -- Thông tin nhân viên (kế thừa infor_users)
@@ -268,3 +274,9 @@ CREATE INDEX idx_users_cardid ON infor_users(card_id);
 CREATE INDEX idx_medical_cardid ON infor_medical_users(card_id);
 CREATE INDEX idx_employee_userid ON infor_employee(infor_users_id);
 CREATE INDEX idx_schedule_emp ON schedule_employee(infor_employee_id);
+
+--Timeline: 03:00 AM: Cập nhật lại toàn bộ bảng, thêm bảng, xoá bảng...
+--Sử dụng bảng auth_user cho đăng nhập khách hàng (map tham chiếu với phone_number)
+--Sử dụng bảng auth_employee cho đăng nhập nhân viên (map tham chiếu với employee)
+
+DROP TABLE IF EXISTS shedule_doctor CASCADE;
