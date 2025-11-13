@@ -91,13 +91,13 @@ export const registerEmployee = async (req, res) => {
  LOGIN EMPLOYEE
 ---------*/
 export const loginEmployee = async (req, res) => {
-  const { infor_auth_employee_id, password } = req.body;
+  const { employee_id, password } = req.body;
 
   try {
     // Truy vấn tài khoản theo infor_auth_employee_id
     const result = await db.query(
       "SELECT * FROM infor_auth_employee WHERE infor_auth_employee_id = $1",
-      [infor_auth_employee_id]
+      [employee_id]
     );
 
     if (result.rowCount === 0) {
@@ -140,28 +140,32 @@ export const loginEmployee = async (req, res) => {
  GET EMPLOYEE BY ID
 ---------*/
 export const getEmployeeById = async (req, res) => {
-  const { employee_id } = req.params;
+  const { employee_id } = req.params; // <-- lấy id từ URL
 
   try {
-    //Câu truy vấn lấy đầy đủ thông tin nhân viên theo employee_id
     const q = `
       SELECT 
-        id,
-        employee_id,
-        phone_number,
-        card_id,
-        full_name,
-        date_of_birth,
-        permanent_address,
-        current_address,
-        position, 
-        department,
-        started_date,
-        salary,
-        status_employee
-      FROM infor_users
-      WHERE employee_id = $1 
-        AND role_user = 'employee'
+        e.infor_employee_id,
+        u.full_name,
+        u.card_id,
+        u.phone_number,
+        u.date_of_birth,
+        u.gender,
+        u.permanent_address,
+        u.current_address,
+        p.position_name AS position,
+        d.department_name AS department,
+        e.business,
+        e.started_date,
+        e.salary,
+        e.coefficient,
+        e.attached,
+        e.status_employee
+      FROM infor_employee e
+      JOIN infor_users u ON e.infor_users_id = u.infor_users_id
+      LEFT JOIN list_position p ON e.position_id = p.position_id
+      LEFT JOIN list_department d ON e.department_id = d.department_id
+      WHERE e.infor_employee_id = $1
       LIMIT 1;
     `;
 
@@ -180,13 +184,14 @@ export const getEmployeeById = async (req, res) => {
     });
 
   } catch (err) {
-    console.error("Lấy ID Nhân viên không thành công:", err);
+    console.error("❌ Lỗi khi lấy thông tin nhân viên:", err);
     return res.status(500).json({
       ok: false,
-      error: "❌ Lỗi kết nối server!"
+      error: "Lỗi máy chủ khi truy vấn thông tin nhân viên!"
     });
   }
 };
+
 
 /*--------- 
  GET USER BY ID

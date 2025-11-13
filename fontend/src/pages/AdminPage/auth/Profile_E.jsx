@@ -10,8 +10,7 @@ const Profile_E = ({ employeeData }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      // Nếu đã có prop employeeData thì không cần gọi API
-      if (employeeData) return;
+      if (employeeData) return; // Nếu đã có prop truyền vào thì bỏ qua
 
       const employeeId = localStorage.getItem('employeeId');
       if (!employeeId) {
@@ -22,35 +21,54 @@ const Profile_E = ({ employeeData }) => {
       setLoading(true);
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get(`http://localhost:5001/api/employee/${encodeURIComponent(employeeId)}`, {
-          headers: token ? { Authorization: `Bearer ${token}` } : {}
-        });
 
-        if (res.data?.ok) {
-          const emp = res.data.data;
+        // 🔹 Gọi API lấy thông tin nhân viên theo employeeId
+        const res = await axios.get(
+          `http://localhost:5001/api/employee/${encodeURIComponent(employeeId)}`,
+          { headers: token ? { Authorization: `Bearer ${token}` } : {} }
+        );
 
-          // Map dữ liệu backend -> dữ liệu hiển thị
-          setData({
-            hoTen: emp.full_name || '',
-            ngaySinh: emp.date_of_birth || '',
-            gioiTinh: emp.gender || '-', // Nếu chưa có cột gender trong DB thì để trống
-            sdt: emp.phone_number || '',
-            email: emp.email || '',
-            diaChi: emp.current_address || emp.permanent_address || '',
-            chucVu: emp.position || '',
-            maNV: emp.employee_id || employeeId,
-            ngayVaoLam: emp.started_date || '',
-            phongBan: emp.department || '',
-            luongCoBan: emp.salary ? emp.salary.toLocaleString('vi-VN') + ' VND' : '',
-            tinhTrang: emp.status_employee === 'active'
+        if (!res.data?.ok) {
+          setError(res.data?.message || 'Không lấy được dữ liệu nhân viên.');
+          return;
+        }
+
+        const emp = res.data.data;
+
+        // 🔹 Lấy thêm tên phòng ban & chức vụ (nếu chỉ có ID)
+        let departmentName = '';
+        let positionName = '';
+
+        if (emp.department_id) {
+          const depRes = await axios.get(`http://localhost:5001/api/department/${emp.department_id}`);
+          if (depRes.data?.ok) departmentName = depRes.data.data.department_name;
+        }
+
+        if (emp.position_id) {
+          const posRes = await axios.get(`http://localhost:5001/api/position/${emp.position_id}`);
+          if (posRes.data?.ok) positionName = posRes.data.data.position_name;
+        }
+
+        // 🔹 Map dữ liệu hiển thị
+        setData({
+          hoTen: emp.full_name || '',
+          ngaySinh: emp.date_of_birth || '',
+          gioiTinh: emp.gender || '-',
+          sdt: emp.phone_number || '',
+          email: emp.email || '',
+          diaChi: emp.current_address || emp.permanent_address || '',
+          chucVu: positionName || emp.position || '',
+          maNV: emp.employee_id || employeeId,
+          ngayVaoLam: emp.started_date || '',
+          phongBan: departmentName || emp.department || '',
+          luongCoBan: emp.salary ? emp.salary.toLocaleString('vi-VN') + ' VND' : '',
+          tinhTrang:
+            emp.status_employee === 'active'
               ? 'Đang hoạt động'
               : emp.status_employee === 'on_leave'
               ? 'Đang nghỉ phép'
               : 'Ngừng làm việc'
-          });
-        } else {
-          setError(res.data?.message || 'Không lấy được dữ liệu nhân viên.');
-        }
+        });
       } catch (err) {
         setError(err.response?.data?.message || 'Lỗi khi kết nối đến máy chủ.');
       } finally {
@@ -61,25 +79,8 @@ const Profile_E = ({ employeeData }) => {
     fetchData();
   }, [employeeData]);
 
-  // Dữ liệu mặc định hiển thị nếu không có dữ liệu API
-  const defaultData = {
-    hoTen: 'Nguyễn Thị Bích',
-    ngaySinh: '01/01/1990',
-    gioiTinh: 'Nữ',
-    sdt: '0123456789',
-    email: 'bich.nt@healthcare.vn',
-    diaChi: '123 Đường A, Quận B, TP HCM',
-    chucVu: 'Tiếp Tân (Receptionist)',
-    maNV: 'NV001',
-    ngayVaoLam: '15/10/2022',
-    phongBan: 'Lễ Tân',
-    luongCoBan: '12,000,000 VND',
-    tinhTrang: 'Đang hoạt động'
-  };
+  const display = data || {};
 
-  const display = data || defaultData;
-
-  // Component hiển thị từng dòng
   const DetailRow = ({ label, value }) => (
     <div className="flex justify-between py-2 border-b border-gray-100">
       <p className="font-medium text-gray-600">{label}:</p>
@@ -87,9 +88,6 @@ const Profile_E = ({ employeeData }) => {
     </div>
   );
 
-  // ----------
-  // UI
-  // ----------
   return (
     <div className="p-8 bg-[#f5f5f5] h-full overflow-y-auto">
       <h1 className="text-2xl font-bold mb-6">Thông tin cá nhân & công việc</h1>
@@ -126,20 +124,20 @@ const Profile_E = ({ employeeData }) => {
             </div>
 
             <div className="mt-8 flex justify-end gap-3">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300"
-                  onClick={() => navigate('/Admin/auth/update')}
-                  >Chỉnh Sửa</button>
+                onClick={() => navigate('/Admin/auth/update')}
+              >
+                Chỉnh Sửa
+              </button>
               <button
                 type="button"
                 className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
                 onClick={() => {
                   if (!window.confirm('Bạn có chắc muốn đăng xuất?')) return;
-                  try {
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('employeeId');
-                  } catch (e) {}
+                  localStorage.removeItem('token');
+                  localStorage.removeItem('employeeId');
                   setData(null);
                   navigate('/Admin/auth/Login', { replace: true });
                 }}

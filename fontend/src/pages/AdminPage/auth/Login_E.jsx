@@ -19,7 +19,7 @@ const Login_E = () => {
 
             if (res.data?.token) {
                 localStorage.setItem('token', res.data.token);
-                localStorage.setItem('employeeId', employeeId);
+                localStorage.setItem('employeeId', res.data.employee.employee_id);
                 navigate('/Admin/Dashboard');
             } else {
                 setMessage(res.data?.message || 'Login failed');
