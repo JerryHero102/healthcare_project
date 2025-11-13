@@ -6,83 +6,49 @@ import jwt from "jsonwebtoken";
  REGISTER EMPLOYEE
 ---------*/
 export const registerEmployee = async (req, res) => {
-  const { employee_id, password, phone, card_id } = req.body;
-  //Timeline: Chuyển qua bảng auth_employee
+  const { full_name, phone_number, card_id, password } = req.body;
+
   try {
-    if (!password || !phone || !card_id) {
+    if (!full_name || !phone_number || !card_id || !password) {
       return res.status(400).json({ error: "⚠️ Vui lòng nhập đầy đủ thông tin!" });
     }
 
-    const isNumeric = /^\d+$/; // chỉ chấp nhận ký tự số
-
-    // Kiểm tra employee_id nếu có
-    if (employee_id) {
-      if (!isNumeric.test(employee_id) || employee_id.length !== 10) {
-        return res.status(400).json({ error: "❌ Mã nhân viên phải gồm đúng 10 chữ số!" });
-      }
-    }
-
-    // Kiểm tra phone & card_id
-    if (!isNumeric.test(phone) || phone.length !== 10) {
-      return res.status(400).json({ error: "❌ Số điện thoại phải gồm đúng 10 chữ số!" });
-    }
-    if (!isNumeric.test(card_id) || card_id.length !== 12) {
-      return res.status(400).json({ error: "❌ Số thẻ (card_id) phải gồm đúng 12 chữ số!" });
-    }
-
-    // Kiểm tra trùng
-    if ((employee_id && (employee_id === phone || employee_id === card_id)) || phone === card_id) {
-      return res.status(400).json({
-        error: "❌ Mã nhân viên, Số điện thoại và Căn cước công dân không được trùng nhau!"
-      });
-    }
-
-    // Kiểm tra trùng trong DB
-    const checkExistQuery = `
-      SELECT * FROM infor_users
-      WHERE (employee_id IS NOT NULL AND employee_id = $1)
-        OR phone_number = $2
-        OR card_id = $3
-    `;
-    const existResult = await db.query(checkExistQuery, [
-      employee_id || null, // quan trọng: undefined -> null
-      phone,
-      card_id
-    ]);
-
+    // Kiểm tra trùng số điện thoại hoặc card_id
+    const existQuery = `SELECT * FROM infor_users WHERE phone_number = $1 OR card_id = $2`;
+    const existResult = await db.query(existQuery, [phone_number, card_id]);
     if (existResult.rowCount > 0) {
-      return res.status(400).json({
-        error: "⚠️ Mã nhân viên, Số điện thoại và Căn cước công dân không được trùng nhau!"
-      });
+      return res.status(400).json({ error: "⚠️ Số điện thoại hoặc Căn cước công dân đã tồn tại!" });
     }
 
     // Băm password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Xác định role dựa vào employee_id
-    const role_user = employee_id ? 'employee' : 'users';
+    // 1️⃣ Thêm vào bảng infor_auth_employee
+    const insertAuth = `INSERT INTO infor_auth_employee (password_employee) VALUES ($1) RETURNING infor_auth_employee_id`;
+    const authResult = await db.query(insertAuth, [hashedPassword]);
+    const authId = authResult.rows[0].infor_auth_employee_id;
 
-    // Thêm mới
-    const insertAuthQuery = `
-      INSERT INTO infor_users (employee_id, password, phone_number, card_id, role_user)
-      VALUES ($1, $2, $3, $4, $5)
-      RETURNING *
+    // 2️⃣ Thêm vào bảng infor_users
+    const insertUser = `INSERT INTO infor_users (phone_number, card_id, full_name) VALUES ($1, $2, $3) RETURNING infor_users_id`;
+    const userResult = await db.query(insertUser, [phone_number, card_id, full_name]);
+    const usersId = userResult.rows[0].infor_users_id;
+
+    // 3️⃣ Thêm vào bảng infor_employee
+    const insertEmp = `
+      INSERT INTO infor_employee (infor_users_id, infor_auth_employee, status_employee)
+      VALUES ($1, $2, 'active')
+      RETURNING infor_employee_id
     `;
-    const authResult = await db.query(insertAuthQuery, [
-      employee_id || null,
-      hashedPassword,
-      phone,
-      card_id,
-      role_user
-    ]);
+    const empResult = await db.query(insertEmp, [usersId, authId]);
 
     return res.status(201).json({
-      message: "✅ Đăng ký thành công!",
-      user: authResult.rows[0]
+      success: true,
+      message: "✅ Đăng ký nhân viên thành công!",
+      employee_id: empResult.rows[0].infor_employee_id
     });
 
   } catch (err) {
-    console.error("Đăng ký thất bại:", err);
+    console.error("❌ registerEmployee error:", err);
     return res.status(500).json({ error: "❌ Đăng ký thất bại, lỗi hệ thống!" });
   }
 };
@@ -91,48 +57,45 @@ export const registerEmployee = async (req, res) => {
  LOGIN EMPLOYEE
 ---------*/
 export const loginEmployee = async (req, res) => {
-  const { employee_id, password } = req.body;
+  const { infor_employee_id, password } = req.body;
 
   try {
-    // Truy vấn tài khoản theo infor_auth_employee_id
-    const result = await db.query(
-      "SELECT * FROM infor_auth_employee WHERE infor_auth_employee_id = $1",
-      [employee_id]
-    );
+    const query = `
+      SELECT ie.infor_employee_id, iae.password_employee
+      FROM infor_employee ie
+      JOIN infor_auth_employee iae ON ie.infor_auth_employee = iae.infor_auth_employee_id
+      WHERE ie.infor_employee_id = $1
+      LIMIT 1
+    `;
+    const { rows, rowCount } = await db.query(query, [infor_employee_id]);
 
-    if (result.rowCount === 0) {
-      return res.status(400).json({ success: false, message: "Không tìm thấy tài khoản" });
+    if (rowCount === 0) {
+      return res.status(404).json({ success: false, message: "Không tìm thấy tài khoản" });
     }
 
-    const user = result.rows[0];
+    const employee = rows[0];
+    const match = await bcrypt.compare(password, employee.password_employee);
 
-    // So sánh password nhập vào với password đã hash trong DB
-    const isMatch = await bcrypt.compare(password, user.password_employee);
-    if (!isMatch) {
+    if (!match) {
       return res.status(400).json({ success: false, message: "Sai mật khẩu" });
     }
 
-    // Tạo JWT token
     const token = jwt.sign(
-      { infor_auth_employee_id: user.infor_auth_employee_id, employee_id: user.employee_id },
+      { infor_employee_id: employee.infor_employee_id },
       process.env.JWT_SECRET || "SECRET_KEY",
       { expiresIn: "1h" }
     );
 
-    res.json({
+    return res.json({
       success: true,
       message: "Đăng nhập thành công",
       token,
-      user: {
-        infor_auth_employee_id: user.infor_auth_employee_id,
-        employee_id: user.employee_id,
-        position: user.position
-      }
+      employee: { infor_employee_id: employee.infor_employee_id }
     });
 
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, message: "Đăng nhập thất bại" });
+    console.error("❌ loginEmployee error:", err);
+    return res.status(500).json({ success: false, message: "Đăng nhập thất bại" });
   }
 };
 

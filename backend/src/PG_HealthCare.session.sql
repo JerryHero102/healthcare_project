@@ -1,105 +1,3 @@
--- ------/////BẢNG NGƯỜI DÙNG (KHÁCH HÀNG / NHÂN VIÊN)/////--------
--- CREATE TABLE infor_users (
---   id SERIAL PRIMARY KEY,
---   employee_id VARCHAR(10) UNIQUE, --Dùng để đăng nhập nhân viên
---   phone_number VARCHAR(10) UNIQUE NOT NULL, --Dùng để đăng nhập khách hàng
---   password VARCHAR(255) NOT NULL, --Dùng để đăng nhập nhân viên/ khách hàng
---   card_id VARCHAR(12) UNIQUE NOT NULL,
---   full_name VARCHAR(100),
---   date_of_birth DATE,
---   permanent_address VARCHAR(255),
---   current_address VARCHAR(255),
---   role_user varchar(20) DEFAULT 'users', -- Phân quyền (users, employees, admins)
---   -- Nhân viên 
---   position VARCHAR(50), -- Chức vụ
---   department VARCHAR(50), -- Phòng ban
---   started_date DATE, -- Ngày bắt đầu làm việc
---   salary INT, -- Lương cơ bản
---   status_employee VARCHAR(20) DEFAULT 'active' -- Trạng thái làm việc (active, inactive, on_leave)
--- );
--- ALTER TABLE infor_users ADD column gender INT
-
-
--- ------/////BẢNG BÁC SĨ/ Y Tá / Điều dưỡng //////--------
--- CREATE TABLE infor_doctor_nurse(
---   doctor_nurse_id varchar(10) PRIMARY KEY NOT NULL,
---   Specialty varchar(100), --Chuyên khoa
---   educational_level varchar(100), --Trình độ
---   experience varchar(100), --Kinh nghiệm
---   professtional_license varchar(100), --giấy phép hành ngheè
---   professtional_description varchar(255), --mô tả
---   card_id varchar(12) UNIQUE not NULL,
---   CONSTRAINT fk_cardid_infor_user_doctor FOREIGN KEY (card_id) REFERENCES infor_users(card_id)
--- );
-
-
--- ------/////BẢNG Thông tin hành chính/ công việc //////--------
--- CREATE TABLE infor_work_employee (
---   id_work_information serial PRIMARY KEY,
---   id_schedule_doctor INT UNIQUE,  --Lịch làm việc (lưu vào chuối + tạo bảng lịch riêng)
---   business varchar(100), --Phòng khám / bệnh viện công tác
---   status_work varchar(50), --Trang thái làm việc (làm việc, nghỉ phép, nghỉ hưu)
---   doctor_nurse_id varchar(10) NOT NULL,
---   FOREIGN KEY (doctor_nurse_id) REFERENCES infor_doctor_nurse(doctor_nurse_id)
--- );
-
--- ALTER TABLE infor_work_employee ADD column 
-
-
--- ------/////BẢNG Lịch của BÁC SĨ //////--------
--- CREATE TABLE shedule_doctor (
---   id_schedule_doctor serial PRIMARY KEY,
---   date_work date NOT NULL, 
---   description_work_in varchar(255), --mô tả công việc
---   status_work varchar(20) DEFAULT 'not yet examined',
---   CONSTRAINT fk_work_schedule FOREIGN KEY (id_schedule_doctor) REFERENCES infor_work_employee(id_schedule_doctor)
--- );
-
-
-
--- ------/////BẢNG Thông tin bệnh nhân //////--------
--- CREATE TABLE infor_medical_users(
---   infor_medical_id serial PRIMARY key,
---   bhyt_id varchar(17) UNIQUE NOT null,
---   card_id varchar(12) UNIQUE not null, 
---   blood_type varchar(5), --Loại máu
---   medical_history varchar (255), --Lịch sử khám
---   allergy varchar(255), --Dị ứng
---   note_users varchar(255), --ghi chú
---   created_date date NOT NULL, --Ngày tạo hồ sơ
---   update_new_date date, --Cập nhật mới nhất
---   status_medical_users varchar DEFAULT 'not yet examined',
---   -- Under treatment (đang điều trị) / Discharged (xuất viện) / Deleted / Paused
---   FOREIGN key (card_id) REFERENCES infor_users(card_id)
--- );
-
--- ------/////Bảng lịch của bệnh nhân //////--------
--- CREATE TABLE schadule_patient(
---   schadule_patient_id serial PRIMARY key not null,
---   infor_medical_id INT not null, --Bảng infor_medical_users
---   doctor_nurse_id varchar(10), --Bảng infor_doctor_nurse
---   examination_day date, --Ngày khám
---   examination_hour time, --Giờ khám
---   clinic varchar(50), -- Phòng khám
---   reason_examination text, -- Lý do khám
---   status_schadule_patient varchar(30) DEFAULT 'booked', --Checked | Cancle | Pending
---   FOREIGN key (infor_medical_id) REFERENCES infor_medical_users(infor_medical_id),
---   FOREIGN key (doctor_nurse_id) REFERENCES infor_doctor_nurse(doctor_nurse_id)
--- );
-
--- --9:00AM-11/11 update coulum
--- ALTER TABLE work_schedule_list_doctor ADD column work_shift time; 
-
-
--- ------/////Bảng chức vụ (position) //////--------
--- ------/////Bảng phòng ban (department) //////--------
-
-
-
--- Healthcare data model (PostgreSQL)
--- File: healthcare_schema.sql
--- Tạo theo ERD do người dùng cung cấp (đã chuẩn hóa tên cột / FK)
-
 -- Xóa các bảng (theo thứ tự tránh vi phạm FK)
 DROP TABLE IF EXISTS schadule_patient_with_doctor CASCADE;
 DROP TABLE IF EXISTS schadule_patient CASCADE;
@@ -236,6 +134,17 @@ CREATE TABLE infor_medical_users (
   status_medical_users VARCHAR(50) DEFAULT 'not yet examined',
   CONSTRAINT fk_medical_user_card FOREIGN KEY (card_id) REFERENCES infor_users(card_id) ON DELETE CASCADE
 );
+ALTER TABLE infor_medical_users ADD COLUMN weight_user varchar(10);
+ALTER TABLE infor_medical_users  ADD COLUMN height_user varchar(10);
+
+CREATE TABLE infor_familymember_user (
+  infor_familymember_user_id SERIAL PRIMARY key,
+  infor_users_id int UNIQUE not null,
+  full_name varchar(255),
+  phone_number varchar(10),
+  relationship varchar(20),
+  CONSTRAINT fk_users_id FOREIGN KEY (infor_users_id) REFERENCES infor_users(infor_users_id)
+);
 
 -- -----------------------
 -- Lịch đăng ký khám bệnh của khách hàng
@@ -313,3 +222,38 @@ SELECT
     JOIN infor_auth_user iau on iu.infor_auth_user_id = iau.infor_auth_user_id
     ORDER BY iu.full_name ASC;
 
+SELECT ie.infor_employee_id, iae.password_employee
+      FROM infor_employee ie
+      JOIN infor_auth_employee iae ON ie.infor_auth_employee = iae.infor_auth_employee_id
+      WHERE ie.infor_employee_id = $ 1
+      LIMIT 1
+
+SELECT ie.infor_employee_id, iae.password_employee
+      FROM infor_employee ie
+      JOIN infor_auth_employee iae ON ie.infor_auth_employee = iae.infor_auth_employee_id
+      WHERE ie.infor_employee_id = $1
+      LIMIT 1
+      
+SELECT 
+        e.infor_employee_id,
+        u.full_name,
+        u.card_id,
+        u.phone_number,
+        u.date_of_birth,
+        u.gender,
+        u.permanent_address,
+        u.current_address,
+        p.position_name AS position,
+        d.department_name AS department,
+        e.business,
+        e.started_date,
+        e.salary,
+        e.coefficient,
+        e.attached,
+        e.status_employee
+      FROM infor_employee e
+      JOIN infor_users u ON e.infor_users_id = u.infor_users_id
+      LEFT JOIN list_position p ON e.position_id = p.position_id
+      LEFT JOIN list_department d ON e.department_id = d.department_id
+      WHERE e.infor_employee_id = $1
+      LIMIT 1;

@@ -13,13 +13,13 @@ const Login_E = () => {
         setMessage('');
         try {
             const res = await axios.post("http://localhost:5001/api/employee/login", {
-                infor_auth_employee_id: employeeId,
+                infor_employee_id: employeeId, 
                 password,
             });
 
             if (res.data?.token) {
                 localStorage.setItem('token', res.data.token);
-                localStorage.setItem('employeeId', res.data.employee.employee_id);
+                localStorage.setItem('employeeId', res.data.employee.infor_employee_id);
                 navigate('/Admin/Dashboard');
             } else {
                 setMessage(res.data?.message || 'Login failed');

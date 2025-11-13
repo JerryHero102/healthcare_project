@@ -5,27 +5,37 @@ import jwt from "jsonwebtoken";
 /*--------- 
  REGISTER USER
 ---------*/
-export const registerUser = async (req, res) => {};
+export const registerUser = async (req, res) => {
+  const {phone,password, card_id } = req.body;
+};
 
 /*--------- 
  LOGIN USER
 ---------*/
-export const loginUser = async (req, res) => {};
+export const loginUser = async (req, res) => {
+
+};
 
 /*--------- 
  DELETE USER
 ---------*/
-export const deleteUser = async (req, res) => {};
+export const deleteUser = async (req, res) => {
+
+};
 
 /*--------- 
  UPDATE USER
 ---------*/
-export const updateUser = async (req, res) => {};
+export const updateUser = async (req, res) => {
+
+};
 
 /*--------- 
  GET USER BY ID
 ---------*/
-export const getUserById = async (req, res) => {};
+export const getUserById = async (req, res) => {
+
+};
 
 /*--------- 
  LIST ALL USER
@@ -67,3 +77,9 @@ export const getListUser = async (req, res) => {
     });
   }
 };
+
+
+/*--------- 
+ FAMILY MEMBERS FOR USERS ID
+---------*/
+export const add_family_members = async (req, res) => {};
