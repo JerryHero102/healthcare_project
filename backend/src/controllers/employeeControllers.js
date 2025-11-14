@@ -23,17 +23,17 @@ export const registerEmployee = async (req, res) => {
     // Băm password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 1️⃣ Thêm vào bảng infor_auth_employee
+    //Thêm vào bảng infor_auth_employee
     const insertAuth = `INSERT INTO infor_auth_employee (password_employee) VALUES ($1) RETURNING infor_auth_employee_id`;
     const authResult = await db.query(insertAuth, [hashedPassword]);
     const authId = authResult.rows[0].infor_auth_employee_id;
 
-    // 2️⃣ Thêm vào bảng infor_users
+    //Thêm vào bảng infor_users
     const insertUser = `INSERT INTO infor_users (phone_number, card_id, full_name) VALUES ($1, $2, $3) RETURNING infor_users_id`;
     const userResult = await db.query(insertUser, [phone_number, card_id, full_name]);
     const usersId = userResult.rows[0].infor_users_id;
 
-    // 3️⃣ Thêm vào bảng infor_employee
+    //Thêm vào bảng infor_employee
     const insertEmp = `
       INSERT INTO infor_employee (infor_users_id, infor_auth_employee, status_employee)
       VALUES ($1, $2, 'active')
@@ -183,6 +183,24 @@ export const updateEmployee = async (req, res) => {
   } catch (err) {
     console.error("Cập nhật nhân viên thất bại:", err);
     return res.status(500).json({ error: "❌ Lỗi kết nối server!" });
+  }
+};
+
+/*--------- 
+ UPDATE EMPLOYEE
+---------*/
+export const deleteEmployee = async (req,res) => {
+  const {employee_id} = req.params;
+  try {
+    const query = `DELETE FROM infor_employee WHERE infor_employee_id = $1 RETURNING *`;
+    const {rows, rowCount} = await db.query(query, [employee_id]);
+    if (rowCount === 0) {
+      return res.status(404).json({ok: false, message: "❌ Không tìm thấy id nhân viên"});
+    }
+    return res.json({ok: true, message: "✅ Xoá account nhân viên thành công!", user: rows[0]});
+  } catch (err) {
+    console.error("❌ Lỗi khi xoá account nhân viên:", err);
+    return res.status(500).json({ ok: false, message: "❌ Lỗi hệ thống!" });
   }
 };
 

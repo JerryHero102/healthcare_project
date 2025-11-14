@@ -1,5 +1,5 @@
 import express, { Router } from 'express'
-import { getEmployeeById, getListEmployee, loginEmployee, registerEmployee, updateEmployee } from '../controllers/employeeControllers.js'
+import { deleteEmployee, getEmployeeById, getListEmployee, loginEmployee, registerEmployee, updateEmployee } from '../controllers/employeeControllers.js'
 
 const router = express.Router();
 
@@ -10,5 +10,6 @@ router.get("/employee-list", getListEmployee);
 router.post("/register", registerEmployee);
 router.get('/:employee_id', getEmployeeById); // <-- Lấy theo employee_id
 router.post("/login", loginEmployee);
+router.delete("/delete/:employee_id", deleteEmployee);
 router.put("/update/:employee_id", updateEmployee);
 export default router;

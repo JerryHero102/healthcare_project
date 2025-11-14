@@ -14,15 +14,18 @@ const Login_U = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [errors, setErrors] = useState({});
 
+    // Cập nhật dữ liệu form
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
-        // Clear error when user starts typing
+
+        // Xóa lỗi khi user nhập
         if (errors[name]) {
             setErrors({ ...errors, [name]: '' });
         }
     };
 
+    // Validate form trước submit
     const validateForm = () => {
         const newErrors = {};
 
@@ -40,22 +43,20 @@ const Login_U = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-  // const handleChange = (e) => {
-  //   setFormData({ ...formData, [e.target.name]: e.target.value });
-  // };
+    // Xử lý submit form
+    const handleSubmit = (e) => {
+        e.preventDefault();
 
-  //       if (!validateForm()) {
-  //           return;
-  //       }
+        if (!validateForm()) {
+            return; // Nếu có lỗi, không submit
+        }
 
-  //       // TODO: Gọi API xác thực user
-  //       // const phone = formData.phone_number;
-  //       // const password = formData.password;
-  //       // console.log("Đăng nhập user:", phone, password);
+        // TODO: Gọi API xác thực user
+        console.log("Đăng nhập user:", formData.phone_number, formData.password);
 
-  //       // TẠM THỜI ĐIỀU HƯỚNG TĨNH
-  //       navigate('/', { replace: true });
-  //   };
+        // Tạm thời điều hướng về trang chủ
+        navigate('/', { replace: true });
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-[#E3FFF8] via-[#EDFFFA] to-[#F0F9FF] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -174,5 +175,6 @@ const Login_U = () => {
             </div>
         </div>
     );
-  };
+};
+
 export default Login_U;
