@@ -193,3 +193,48 @@ export const updateUser = async (req, res) => {
     return res.status(500).json({ ok: false, message: "❌ Lỗi hệ thống!" });
   }
 };
+
+/*--------- 
+GET LIST USER
+---------*/
+// export const getListUser = async (req, res) => {
+//   try {
+//     const q = `
+//       SELECT 
+//         iae.infor_auth_employee_id, 
+//         ie.infor_employee_id, 
+//         iu.full_name, --user
+//         ld.department_name, 
+//         pn.position_name,  
+//         iae.created_at,
+//         ie.status_employee 
+//       FROM infor_employee ie
+//       JOIN infor_users iu ON ie.infor_users_id = iu.infor_users_id
+//       LEFT JOIN infor_auth_employee iae on ie.infor_auth_employee = iae.infor_auth_employee_id
+//       LEFT JOIN list_department ld ON ie.department_id = ld.department_id
+//       LEFT JOIN list_position pn ON ie.position_id = pn.position_id
+//       ORDER BY iu.full_name ASC;
+
+//     `;
+//     const { rows, rowCount } = await db.query(q);
+//     if (rowCount === 0) {
+//       return res.status(404).json({
+//         ok: false,
+//         message: "❌ Không tìm thấy toàn khoản nhân viên nào!"
+//       });
+//     }
+
+//     return res.status(200).json({
+//       ok: true,
+//       data: rows
+//     });
+
+//   } catch (err) {
+//     console.error("Lấy danh sách tin nhân viên không thành công:", err);
+//     return res.status(500).json({
+//       ok: false,
+//       error: "❌ Lỗi kết nối server!"
+//     });
+//   }
+// }
+

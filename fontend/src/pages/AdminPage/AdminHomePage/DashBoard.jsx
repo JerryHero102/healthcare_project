@@ -16,21 +16,11 @@ import Patient_List_Details from "../System/Patient_List_Details"; //Danh sách 
 import Found_Management from "../Accounting/Fund_Management";
 import SalaryManagement from "../Accounting/SalaryManagement";
 //ĐĂNG NHẬP/ĐĂNG KÝ
-<<<<<<< HEAD
-import Login_E from "../auth/Login_E"; 
-import Register_E from "../auth/Register_E"; 
+import Login_E from "../auth/Login_E";
+import Register_E from "../auth/Register_E";
 import Profile_E from "../auth/Profile_E";
 import Add_Infor_E from "../auth/Add_Infor_E";
 import UpdateProfile_E from "../auth/UpdateProfile_E";
-//HOME PAGE
-import Sidebar from './sidebar';
-=======
-import Login_E from "../Auth/Login_E";
-import Register_E from "../Auth/Register_E";
-import Profile_E from "../Auth/Profile_E";
-import Add_Infor_E from "../Auth/Add_Infor_E";
-import UpdateProfile_E from "../Auth/UpdateProfile_E";
->>>>>>> admin-u
 //ADMINSTATOR
 import Accounts_Management from "../Adminstator/Accounts_Management";
 import Employees_Management from "../Adminstator/Employees_Management";

@@ -266,3 +266,60 @@ SELECT
       FROM infor_users iu
 
       DELETE FROM infor_users WHERE infor_users_id = 5
+
+
+      SELECT 
+        auth.infor_auth_user_id, 
+        users.infor_users_id, 
+        users.full_name, --user
+        ld.department_name, 
+        pn.position_name,  
+        iae.created_at,
+        ie.status_employee 
+      FROM infor_auth_user auth
+      JOIN infor_users users ON users.infor_auth_user_id = auth.infor_auth_user_id
+      LEFT JOIN infor_medical_users medical on medical.card_id = users.card_id
+      LEFT JOIN infor_familymember_user family ON family.infor_users_id = users.infor_users_id
+      ORDER BY users.full_name ASC;
+
+      CREATE TABLE infor_medical_users (
+  infor_medical_id SERIAL PRIMARY KEY,
+  bhyt_id VARCHAR(17) UNIQUE,
+  card_id VARCHAR(12) UNIQUE NOT NULL,
+  blood_type VARCHAR(5),
+  medical_history TEXT,
+  allergy TEXT,
+  note_users TEXT,
+  created_date DATE DEFAULT CURRENT_DATE,
+  update_new_date DATE,
+  status_medical_users VARCHAR(50) DEFAULT 'not yet examined',
+  CONSTRAINT fk_medical_user_card FOREIGN KEY (card_id) REFERENCES infor_users(card_id) ON DELETE CASCADE
+);
+
+CREATE TABLE infor_users (
+  infor_users_id SERIAL PRIMARY KEY,
+  infor_auth_user_id INT UNIQUE,
+  phone_number VARCHAR(10) UNIQUE,
+  card_id VARCHAR(12) UNIQUE,
+  full_name VARCHAR(100),
+  date_of_birth DATE,
+  gender INT,
+  permanent_address VARCHAR(255),
+  current_address VARCHAR(255),
+  CONSTRAINT fk_authuser_phone FOREIGN KEY (infor_auth_user_id) REFERENCES infor_auth_user(infor_auth_user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE infor_auth_user (
+  infor_auth_user_id SERIAL PRIMARY KEY,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE infor_familymember_user (
+  infor_familymember_user_id SERIAL PRIMARY key,
+  infor_users_id int UNIQUE not null,
+  full_name varchar(255),
+  phone_number varchar(10),
+  relationship varchar(20),
+  CONSTRAINT fk_users_id FOREIGN KEY (infor_users_id) REFERENCES infor_users(infor_users_id)
+);
