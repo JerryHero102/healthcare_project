@@ -7,8 +7,8 @@ import Individual_Patient_Management from "../Doctor/Individual_Patient_Manageme
 import Test_Result from "../Doctor/Test_Result"; //Phiếu xét nghiệm
 import Work_Schedule from "../Doctor/Work_Schedule"; //Lịch làm việc của bác sĩ
 // BÁC SĨ XÉT NGHIỆM/ CHỤP PHIM....
-import Laboratory_Test_Report from "../DoctorOther/Laboratory_Test_Report"
-import Test_Result_Form from "../DoctorOther/Test_Result_Form"
+import Laboratory_Test_Report from "../DoctorOther/Laboratory_Test_Report";
+import Test_Result_Form from "../DoctorOther/Test_Result_Form";
 // HỆ THỐNG
 import Appointment_List from "../System/Appointment_List"; //Danh sách cuộc hẹn
 import Patient_List_Details from "../System/Patient_List_Details"; //Danh sách chi tiết thông tin bệnh nhân
