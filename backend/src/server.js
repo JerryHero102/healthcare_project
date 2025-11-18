@@ -1,13 +1,6 @@
 import express from 'express';
-<<<<<<< HEAD
-import employeesRouters from './routes/employeesRouters.js'
-import list_departmentsRouters from './routes/list_departmentRouters.js'
-import list_positionRouters from './routes/list_positionRouters.js'
-import userRouters from './routes/usersRouter.js'
-=======
 import employeesRouters from './routes/employeesRouters.js';
 import usersRouters from './routes/usersRouter.js';
->>>>>>> 8519796619d91bbf391e5f894299a50a66f70f87
 import cors from 'cors';
 import dotenv from 'dotenv';
 import pool from './config/db.js';
@@ -43,31 +36,6 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Existing routes
 app.use(("/api/employee"), employeesRouters);
-<<<<<<< HEAD
-app.use(("/api/user"), userRouters);
-app.use(("/api/department"), list_departmentsRouters);
-app.use(("/api/position"), list_positionRouters);
-
-export const ensureDefaultAdmin = async () => {
-  const adminPassword = process.env.ADMIN_PASSWORD || "Admin@123";
-  const username = "admin";
-  const full_name = "Admin System";
-  const phone_number = "0000000000"; 
-
-  const role = "admin";
-  const department_id = 1; 
-  const position_id = 1; // nếu bạn đã tạo chức vụ Admin = 1
-
-  try {
-    // 1. Kiểm tra đã có admin chưa
-    const checkAdmin = await pool.query(
-      `SELECT 1 FROM auth_users WHERE role = 'admin' LIMIT 1`
-    );
-
-    if (checkAdmin.rowCount > 0) {
-      console.log("ℹ️ Default admin already exists.");
-      return;
-=======
 app.use('/api/department', departmentRoutes);
 app.use('/api/position', positionRoutes);
 
@@ -86,96 +54,62 @@ app.use('/api/account', accountRoutes);
 // =======================
 const ensureDefaultAdmin = async () => {
   const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123';
+  const adminUsername = process.env.ADMIN_USERNAME || 'admin';
   const full_name = 'Admin System';
   const position_id = 1;      // Admin
   const department_id = 1;    // System
   const phone_number = '0000000000';
-
+  const card_id = '000000000000';
   try {
-    // 1️⃣ Kiểm tra admin đã tồn tại chưa (theo phone_number)
-    const userCheck = await pool.query(
-      'SELECT infor_users_id FROM infor_users WHERE phone_number = $1',
-      [phone_number]
+    //Kiểm tra xem đã có admin trong bảng auth_users
+    const authCheck = await pool.query(
+      'SELECT auth_id FROM auth_users WHERE username = $1 AND role = $2 LIMIT 1',
+      [adminUsername, 'admin']
     );
 
-    if (userCheck.rowCount === 0) {
-      // 2️⃣ Tạo infor_users
-      const userResult = await pool.query(
-        `INSERT INTO infor_users (phone_number, full_name) 
-         VALUES ($1, $2)
-         RETURNING infor_users_id`,
-        [phone_number, full_name]
+    if (authCheck.rowCount === 0) {
+      // Tạo record trong auth_users
+      const hashed = await bcrypt.hash(adminPassword, 10);
+      const insertAuth = await pool.query(
+        `INSERT INTO auth_users (username, phone_number, password, role, created_date_auth)
+         VALUES ($1, $2, $3, $4, NOW()) RETURNING auth_id`,
+        [adminUsername, phone_number, hashed, 'admin']
       );
-      const infor_users_id = userResult.rows[0].infor_users_id;
+      const auth_id = insertAuth.rows[0].auth_id;
 
-      // 3️⃣ Tạo infor_auth_employee (login)
-      const hashedPassword = await bcrypt.hash(adminPassword, 10);
-      const authResult = await pool.query(
-        `INSERT INTO infor_auth_employee (password_employee)
-         VALUES ($1)
-         RETURNING infor_auth_employee_id`,
-        [hashedPassword]
-      );
-      const infor_auth_employee_id = authResult.rows[0].infor_auth_employee_id;
+      // Tạo users trỏ tới auth_id (nếu chưa có số điện thoại đó)
+      const userCheck = await pool.query('SELECT user_id FROM infor_users WHERE phone_number = $1 LIMIT 1', [phone_number]);
+      let user_id
+      if (userCheck.rowCount === 0) {
+        const userResult = await pool.query(
+          `INSERT INTO infor_users (auth_id, phone_number, full_name, card_id)
+           VALUES ($1, $2, $3, $4) RETURNING user_id`,
+          [auth_id, phone_number, full_name, card_id]
+        );
+        user_id = userResult.rows[0].user_id;
+      } else {
+        user_id = userCheck.rows[0].user_id;
+        // cập nhật auth_id nếu cần
+        await pool.query('UPDATE infor_users SET auth_id = $1 WHERE user_id = $2', [auth_id, user_id]);
+      }
 
-      // 4️⃣ Tạo infor_employee (thông tin nhân viên)
-      const employeeResult = await pool.query(
-        `INSERT INTO infor_employee (infor_users_id, infor_auth_employee, position_id, department_id, status_employee)
-         VALUES ($1, $2, $3, $4, 'active')
-         RETURNING infor_employee_id`,
-        [infor_users_id, infor_auth_employee_id, position_id, department_id]
-      );
-
-      console.log(`✅ Default admin created successfully. Employee ID: ${employeeResult.rows[0].infor_employee_id}`);
+      // Tạo employee nếu chưa tồn tại
+      // const empCheck = await pool.query('SELECT employee_id FROM infor_employee WHERE user_id = $1 LIMIT 1', [user_id]);
+      // if (empCheck.rowCount === 0) {
+      //   const empInsert = await pool.query(
+      //     `INSERT INTO employee (user_id, position_id, department_id, status_employee)
+      //      VALUES ($1, $2, $3, 'active') RETURNING employee_id`,
+      //     [user_id, position_id, department_id]
+      //   );
+      //   console.log(`✅ Default admin created. Employee ID: ${empInsert.rows[0].employee_id}`);
+      // } else {
+      //   console.log('ℹ️ Default admin employee already exists.');
+      // }
     } else {
-      console.log('ℹ️ Default admin already exists.');
->>>>>>> 8519796619d91bbf391e5f894299a50a66f70f87
+      console.log('ℹ️ Default admin account already exists.');
     }
-
-    // 2. Kiểm tra số điện thoại trùng
-    const checkPhone = await pool.query(
-      `SELECT 1 FROM infor_users WHERE phone_number = $1 LIMIT 1`,
-      [phone_number]
-    );
-
-    if (checkPhone.rowCount > 0) {
-      console.log("⚠️ Phone number already exists. Skipping admin creation.");
-      return;
-    }
-
-    // 3. Tạo auth_users
-    const hashed = await bcrypt.hash(adminPassword, 10);
-
-    const authResult = await pool.query(
-      `INSERT INTO auth_users (username, password, role, created_date_auth)
-       VALUES ($1, $2, $3, NOW())
-       RETURNING auth_id`,
-      [username, hashed, role]
-    );
-
-    const auth_id = authResult.rows[0].auth_id;
-
-    // 4. Tạo infor_users
-    const userResult = await pool.query(
-      `INSERT INTO infor_users (auth_id, full_name, phone_number)
-       VALUES ($1, $2, $3)
-       RETURNING user_id`,
-      [auth_id, full_name, phone_number]
-    );
-
-    const user_id = userResult.rows[0].user_id;
-
-    // 5. Tạo infor_work 
-    await pool.query(
-      `INSERT INTO infor_work (user_id, department_id, position_id, status_employee)
-       VALUES ($1, $2, $3, 'working')`,
-      [user_id, department_id, position_id]
-    );
-
-    console.log(`✅ Default admin created successfully. User ID: ${user_id}`);
-
   } catch (err) {
-    console.error("❌ Error ensuring default admin:", err.message || err);
+    console.error('❌ Error ensuring default admin:', err.message || err);
   }
 };
 
@@ -191,33 +125,32 @@ const ensureDefaultUser = async () => {
   const permanent_address = 'Phường Tân Sơn Nhất, TP. Hồ Chí Minh';
   const current_address = 'Phường Sơn Kỳ, TP. Hồ Chí Minh';
   const gender = 0;
+  try {
+    const defaultUsername = process.env.USER_USERNAME || 'user_default';
 
-        app.listen(PORT, () => {
-                console.log(`🚀 Server running on http://localhost:${PORT}`);
-                console.log(`📚 API Documentation available at http://localhost:${PORT}/api-docs`);
-        });
-};
-
-    if (userCheck.rowCount === 0) {
-      // 1️⃣ Tạo infor_auth_user
+    // Kiểm tra user auth existence
+    const authCheck = await pool.query('SELECT auth_id FROM auth_users WHERE username = $1 LIMIT 1', [defaultUsername]);
+    let auth_id;
+    if (authCheck.rowCount === 0) {
       const hashed = await bcrypt.hash(userPassword, 10);
-      const authResult = await pool.query(
-        `INSERT INTO infor_auth_user (password)
-         VALUES ($1)
-         RETURNING infor_auth_user_id`,
-        [hashed]
+      const insertAuth = await pool.query(
+        `INSERT INTO auth_users (username,phone_number, password, role, created_date_auth) VALUES ($1, $2, $3, $4, NOW()) RETURNING auth_id`,
+        [defaultUsername, phone_number, hashed, 'customer']
       );
-      const infor_auth_user_id = authResult.rows[0].infor_auth_user_id;
+      auth_id = insertAuth.rows[0].auth_id;
+    } else {
+      auth_id = authCheck.rows[0].auth_id;
+    }
 
-      // 2️⃣ Tạo infor_users (thông tin chung)
+    // Tạo users nếu chưa có theo phone_number
+    const userCheck = await pool.query('SELECT user_id FROM infor_users WHERE phone_number = $1 LIMIT 1', [phone_number]);
+    if (userCheck.rowCount === 0) {
       const userResult = await pool.query(
-        `INSERT INTO infor_users (infor_auth_user_id, phone_number, card_id, full_name, date_of_birth, gender, permanent_address, current_address)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-         RETURNING infor_users_id`,
-        [infor_auth_user_id, phone_number, card_id, full_name, date_of_birth, gender, permanent_address, current_address]
+        `INSERT INTO infor_users (auth_id, phone_number, card_id, full_name, date_of_birth, gender, permanent_address, current_address)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING user_id`,
+        [auth_id, phone_number, card_id, full_name, date_of_birth, gender, permanent_address, current_address]
       );
-
-      console.log(`✅ Default user created successfully. User ID: ${userResult.rows[0].infor_users_id}`);
+      console.log(`✅ Default user created successfully. User ID: ${userResult.rows[0].user_id}`);
     } else {
       console.log('ℹ️ Default user already exists.');
     }

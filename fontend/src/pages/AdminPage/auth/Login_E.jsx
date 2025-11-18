@@ -10,6 +10,11 @@ const Login_E = () => {
     const [demoAccounts, setDemoAccounts] = useState([]);
     const navigate = useNavigate();
 
+    // Base URL for backend API (use Vite env or fallback)
+    const API_BASE = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE_URL
+        ? import.meta.env.VITE_API_BASE_URL
+        : 'http://localhost:5001';
+
     // Initialize accounts and load demo list
     useEffect(() => {
         AccountService.initializeAccounts();
@@ -23,32 +28,51 @@ const Login_E = () => {
         setMessage('');
         setIsLoading(true);
 
-        // Simulate API delay
-        setTimeout(() => {
-            // Authenticate using AccountService
-            const result = AccountService.authenticate(employeeId, password);
+        try {
+            const res = await fetch(`${API_BASE}/api/employee/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: employeeId, password }),
+            });
 
-            if (result.success) {
-                const account = result.account;
-
-                // Store auth data in localStorage
-                localStorage.setItem('token', 'static-token-' + Date.now());
-                localStorage.setItem('employeeId', account.employeeId);
-                localStorage.setItem('employeeName', account.name);
-                localStorage.setItem('department', account.department);
-                localStorage.setItem('role', account.role);
-
-                setMessage('Đăng nhập thành công!');
-
-                // Redirect to dashboard after 500ms
-                setTimeout(() => {
-                    navigate('/Admin/Dashboard');
-                }, 500);
-            } else {
-                setMessage(result.message);
-                setIsLoading(false);
+            let data = null;
+            try {
+                data = await res.json();
+            } catch (jsonErr) {
+                data = null; // response was empty or not JSON
             }
-        }, 800);
+
+            if (!res.ok) {
+                const msg = (data && (data.message || data.error)) || `Lỗi server: ${res.status}`;
+                setMessage(msg);
+                setIsLoading(false);
+                return;
+            }
+
+            if (!data || !data.success) {
+                setMessage((data && (data.message || data.error)) || 'Đăng nhập thất bại');
+                setIsLoading(false);
+                return;
+            }
+
+            // Persist token and basic user info
+            localStorage.setItem('token', data.token);
+            if (data.user) {
+                localStorage.setItem('auth_id', String(data.user.auth_id || ''));
+                localStorage.setItem('employeeId', data.user.username || employeeId);
+                localStorage.setItem('employeeName', data.user.username || '');
+                localStorage.setItem('role', data.user.role || '');
+                if (data.user.phone_number) localStorage.setItem('phone_number', data.user.phone_number);
+            }
+
+            setMessage('Đăng nhập thành công!');
+            // Redirect to dashboard after short delay
+            setTimeout(() => navigate('/Admin/Dashboard'), 500);
+        } catch (err) {
+            console.error('Login request failed', err);
+            setMessage('Lỗi kết nối server');
+            setIsLoading(false);
+        }
     };
 
     return (

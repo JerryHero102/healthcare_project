@@ -1,4 +1,8 @@
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+// Load .env so the script can pick up JWT_SECRET automatically
+dotenv.config();
 
 const token = process.argv[2] || process.env.TOKEN;
 const secret = process.env.JWT_SECRET || 'SECRET_KEY';
