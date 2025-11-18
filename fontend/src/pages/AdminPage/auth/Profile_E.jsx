@@ -10,7 +10,7 @@ const Profile_E = ({ employeeData }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (employeeData) return; // Nếu đã có prop truyền vào thì bỏ qua
+      if (employeeData) return;
 
       const employeeId = localStorage.getItem('employeeId');
       if (!employeeId) {
@@ -20,9 +20,7 @@ const Profile_E = ({ employeeData }) => {
 
       setLoading(true);
       try {
-        const token = localStorage.getItem('token');
-
-        // 🔹 Gọi API lấy thông tin nhân viên theo employeeId
+        const token = localStorage.getItem('employeeId');
         const res = await axios.get(
           `http://localhost:5001/api/employee/${encodeURIComponent(employeeId)}`,
           { headers: token ? { Authorization: `Bearer ${token}` } : {} }
@@ -34,8 +32,6 @@ const Profile_E = ({ employeeData }) => {
         }
 
         const emp = res.data.data;
-
-        // 🔹 Lấy thêm tên phòng ban & chức vụ (nếu chỉ có ID)
         let departmentName = '';
         let positionName = '';
 
@@ -48,8 +44,6 @@ const Profile_E = ({ employeeData }) => {
           const posRes = await axios.get(`http://localhost:5001/api/position/${emp.position_id}`);
           if (posRes.data?.ok) positionName = posRes.data.data.position_name;
         }
-
-        // 🔹 Map dữ liệu hiển thị
         setData({
           hoTen: emp.full_name || '',
           ngaySinh: emp.date_of_birth || '',
