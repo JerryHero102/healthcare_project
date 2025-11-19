@@ -1,27 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AccountService from '../../../services/AccountService';
+import axios from 'axios';  
 
 const Login_E = () => {
-    const [employeeId, setEmployeeId] = useState("");
-    const [password, setPassword] = useState("");
-    const [message, setMessage] = useState("");
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [demoAccounts, setDemoAccounts] = useState([]);
     const navigate = useNavigate();
 
-    // Base URL for backend API (use Vite env or fallback)
-    const API_BASE = typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE_URL
-        ? import.meta.env.VITE_API_BASE_URL
-        : 'http://localhost:5001';
-
-    // Initialize accounts and load demo list
-    useEffect(() => {
-        AccountService.initializeAccounts();
-        const accounts = AccountService.getAllAccounts();
-        // Show only first 3 accounts for demo
-        setDemoAccounts(accounts.slice(0, 3));
-    }, []);
+    const API_BASE = import.meta.env?.VITE_API_BASE_URL || 'http://localhost:5001';
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -29,58 +17,38 @@ const Login_E = () => {
         setIsLoading(true);
 
         try {
-            const res = await fetch(`${API_BASE}/api/employee/auth/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: employeeId, password }),
+            const res = await axios.post(`${API_BASE}/api/employee/auth/login`, {
+                username,
+                password
             });
 
-            let data = null;
-            try {
-                data = await res.json();
-            } catch (jsonErr) {
-                data = null; // response was empty or not JSON
-            }
-
-            if (!res.ok) {
-                const msg = (data && (data.message || data.error)) || `Lỗi server: ${res.status}`;
-                setMessage(msg);
-                setIsLoading(false);
+            if (!res.data?.success) {
+                setMessage(res.data?.message || 'Sai thông tin đăng nhập');
                 return;
             }
 
-            if (!data || !data.success) {
-                setMessage((data && (data.message || data.error)) || 'Đăng nhập thất bại');
-                setIsLoading(false);
-                return;
-            }
+            const user = res.data.user;
 
-            // Persist token and basic user info
-            localStorage.setItem('token', data.token);
-            if (data.user) {
-                localStorage.setItem('auth_id', String(data.user.auth_id || ''));
-                localStorage.setItem('employeeId', data.user.username || employeeId);
-                localStorage.setItem('employeeName', data.user.username || '');
-                localStorage.setItem('role', data.user.role || '');
-                if (data.user.phone_number) localStorage.setItem('phone_number', data.user.phone_number);
-            }
+            // Lưu token và auth_id
+            localStorage.setItem('token', res.data.token);
+            localStorage.setItem('auth_id', user.auth_id);
+            localStorage.setItem('employeeId', user.username);
+            localStorage.setItem('role', user.role);
 
             setMessage('Đăng nhập thành công!');
-            // Redirect to dashboard after short delay
-            setTimeout(() => navigate('/Admin/Dashboard'), 500);
+            setTimeout(() => navigate('/Admin/Dashboard'), 400);
         } catch (err) {
-            console.error('Login request failed', err);
-            setMessage('Lỗi kết nối server');
+            const msg = err.response?.data?.message || 'Lỗi kết nối';
+            setMessage(msg);
+        } finally {
             setIsLoading(false);
         }
     };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-[var(--color-admin-bg-light)]">
-            {/* Login Card */}
             <div className="w-full max-w-md">
                 <div className="bg-[var(--color-admin-card-light)] rounded-xl shadow-lg border border-[var(--color-admin-border-light)] p-8">
-                    {/* Logo & Title */}
                     <div className="flex flex-col items-center mb-8">
                         <div className="size-16 text-[var(--color-admin-primary)] mb-4">
                             <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -95,34 +63,25 @@ const Login_E = () => {
                         </p>
                     </div>
 
-                    {/* Login Form */}
                     <form onSubmit={handleLogin} className="space-y-5">
-                        {/* Employee ID */}
                         <div>
-                            <label
-                                htmlFor="employee_id"
-                                className="block text-sm font-medium text-[var(--color-admin-text-light-primary)] mb-2"
-                            >
-                                Mã nhân viên
+                            <label htmlFor="username" className="block text-sm font-medium text-[var(--color-admin-text-light-primary)] mb-2">
+                                Username
                             </label>
                             <input
                                 type="text"
-                                id="employee_id"
-                                name="employee_id"
-                                placeholder="Nhập mã nhân viên"
-                                value={employeeId}
-                                onChange={(e) => setEmployeeId(e.target.value)}
+                                id="username"
+                                name="username"
+                                placeholder="Nhập username"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
                                 required
                                 className="w-full px-4 py-3 rounded-lg border border-[var(--color-admin-border-light)] bg-white text-[var(--color-admin-text-light-primary)] placeholder:text-[var(--color-admin-text-light-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--color-admin-primary)] focus:border-transparent"
                             />
                         </div>
 
-                        {/* Password */}
                         <div>
-                            <label
-                                htmlFor="password"
-                                className="block text-sm font-medium text-[var(--color-admin-text-light-primary)] mb-2"
-                            >
+                            <label htmlFor="password" className="block text-sm font-medium text-[var(--color-admin-text-light-primary)] mb-2">
                                 Mật khẩu
                             </label>
                             <input
@@ -137,7 +96,6 @@ const Login_E = () => {
                             />
                         </div>
 
-                        {/* Login Button */}
                         <button
                             type="submit"
                             disabled={isLoading}
@@ -156,7 +114,6 @@ const Login_E = () => {
                             )}
                         </button>
 
-                        {/* Message */}
                         {message && (
                             <div className={`p-3 rounded-lg text-sm text-center ${
                                 message.includes('thành công')
@@ -168,28 +125,10 @@ const Login_E = () => {
                         )}
                     </form>
 
-                    {/* Demo Accounts Info */}
-                    <div className="mt-6 p-4 bg-[var(--color-admin-bg-light)] rounded-lg">
-                        <p className="text-xs font-semibold text-[var(--color-admin-text-light-primary)] mb-2">
-                            Tài khoản demo:
-                        </p>
-                        <div className="space-y-1 text-xs text-[var(--color-admin-text-light-secondary)]">
-                            {demoAccounts.map((acc, idx) => (
-                                <p key={idx}>
-                                    • {acc.name}: <code className="bg-white px-2 py-0.5 rounded">{acc.employeeId}</code> / <code className="bg-white px-2 py-0.5 rounded">{acc.password}</code>
-                                </p>
-                            ))}
-                        </div>
-                        <p className="text-xs text-[var(--color-admin-text-light-secondary)] mt-2 italic">
-                            💡 Admin có thể thêm/sửa/xóa tài khoản tại "Quản lý tài khoản"
-                        </p>
-                    </div>
+                    <p className="text-center text-xs text-[var(--color-admin-text-light-secondary)] mt-6">
+                        © 2024 HealthCare. Phiên bản demo
+                    </p>
                 </div>
-
-                {/* Footer */}
-                <p className="text-center text-xs text-[var(--color-admin-text-light-secondary)] mt-6">
-                    © 2024 HealthCare. Phiên bản demo - Không kết nối database
-                </p>
             </div>
         </div>
     );

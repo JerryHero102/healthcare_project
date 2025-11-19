@@ -5,8 +5,105 @@ import jwt from "jsonwebtoken";
 
 
 //-----------------//------------------- THÔNG TIN NHÂN VIÊN (INFOR_USERS && INFOR_WORKS) -----------------\\-------------------\\
+
 /*--------- 
- ADD INFOR EMPLOYEE
+ GET INFOR EMPLOYEE BY ID - Hiển thị Profile cá nhân (có kiểm tra token)
+---------*/
+export const getEmployeeById = async (req, res) => {
+   const authId = req.user.auth_id;
+  try {
+    if (!authId) return res.status(400).json({ ok: false, message: 'Không tìm thấy ID' });
+
+    // Try to find by infor_users_id first, then by auth_id, then by user_id
+    const q = `
+      SELECT
+        iu.user_id,
+        iu.full_name,
+        iu.card_id,
+        iu.phone_number,
+        iu.date_of_birth,
+        iu.gender,
+        iu.permanent_address,
+        iu.current_address,
+        ie.employee_id,
+        ie.position_id,
+        ie.department_id,
+        ie.started_date,
+        ie.salary,
+        ie.status_employee
+      FROM infor_users iu
+      LEFT JOIN auth_users au ON au.auth_id = iu.auth_id
+      LEFT JOIN infor_employee ie ON ie.user_id = iu.user_id
+      WHERE iu.user_id = $1
+      LIMIT 1;
+    `;
+
+    let result = await db.query(q, [authId]);
+    if (result.rowCount === 0) {
+      // try by auth_id
+      const q2 = `
+        SELECT
+          iu.user_id,
+          iu.full_name,
+          iu.card_id,
+          iu.phone_number,
+          iu.date_of_birth,
+          iu.gender,
+          iu.permanent_address,
+          iu.current_address,
+          ie.employee_id,
+          ie.position_id,
+          ie.department_id,
+          ie.started_date,
+          ie.salary,
+          ie.status_employee
+        FROM infor_users iu
+        LEFT JOIN infor_employee ie ON ie.user_id = iu.user_id
+        WHERE iu.auth_id = $1
+        LIMIT 1;
+      `;
+      result = await db.query(q2, [authId]);
+    }
+
+    if (result.rowCount === 0) {
+      // try by user_id
+      const q3 = `
+        SELECT
+          iu.user_id,
+          iu.full_name,
+          iu.card_id,
+          iu.phone_number,
+          iu.date_of_birth,
+          iu.gender,
+          iu.permanent_address,
+          iu.current_address,
+          ie.employee_id,
+          ie.position_id,
+          ie.department_id,
+          ie.started_date,
+          ie.salary,
+          ie.status_employee
+        FROM infor_users iu
+        LEFT JOIN infor_employee ie ON ie.user_id = iu.user_id
+        WHERE iu.user_id = $1
+        LIMIT 1;
+      `;
+      result = await db.query(q3, [authId]);
+    }
+
+    if (result.rowCount === 0) {
+      return res.status(404).json({ ok: false, message: 'Không tìm thấy thông tin nhân viên' });
+    }
+
+    return res.status(200).json({ ok: true, data: result.rows[0] });
+  } catch (err) {
+    console.error('Lỗi khi lấy thông tin nhân viên:', err);
+    return res.status(500).json({ ok: false, error: 'Lỗi server' });
+  }
+};
+
+/*--------- 
+ ADD INFOR EMPLOYEE - Dành cho Admin
 ---------*/
 export const addInforEmployee = async (req, res) => {
   const {
@@ -67,44 +164,73 @@ export const addInforEmployee = async (req, res) => {
   }
 };
 
-/*--------- 
- GET INFOR EMPLOYEE BY ID (infor_users_id)
----------*/
-export const getEmployeeById = async (req, res) => {
-  const { infor_users_id } = req.params;
 
+// ==================================================
+// ADMIN — LẤY PROFILE NHÂN VIÊN THEO ID
+// ==================================================
+
+export const adminGetEmployeeById = async (req, res) => {
   try {
-    if (!infor_users_id) return res.status(400).json({ ok: false, message: 'Thiếu infor_users_id' });
+    if (req.user.role !== "admin")
+      return res.status(403).json({ message: "Forbidden" });
 
-    const q = `
-      SELECT
-        infor_users_id,
-        full_name,
-        card_id,
-        phone_number,
-        date_of_birth,
-        gender,
-        permanent_address,
-        current_address
-      FROM infor_users
-      WHERE infor_users_id = $1
-      LIMIT 1;
+    const { auth_id } = req.params;
+
+    const query = `
+      SELECT auth_id, fullname, username, email, phone, role
+      FROM Employees
+      WHERE auth_id = ?
     `;
+    const [rows] = await db.execute(query, [auth_id]);
 
-    const { rows, rowCount } = await db.query(q, [infor_users_id]);
-    if (rowCount === 0) {
-      return res.status(404).json({ ok: false, message: 'Không tìm thấy thông tin nhân viên' });
+    if (rows.length === 0)
+      return res.status(404).json({ message: "Employee not found" });
+
+    res.json(rows[0]);
+  } catch (err) {
+    console.error("Admin get employee error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+// ==================================================
+// ADMIN — CẬP NHẬT NHÂN VIÊN
+// ==================================================
+export const adminUpdateEmployee = async (req, res) => {
+  try {
+    if (req.user.role !== "admin")
+      return res.status(403).json({ message: "Forbidden" });
+
+    const { auth_id } = req.params;
+    const { fullname, email, phone, role, password } = req.body;
+
+    let passwordHash = null;
+    if (password) {
+      passwordHash = await bcrypt.hash(password, 10);
     }
 
-    return res.status(200).json({ ok: true, data: rows[0] });
+    const query = `
+      UPDATE Employees
+      SET fullname = ?, email = ?, phone = ?, role = ?, ${password ? "password = ?," : ""} updated_at = NOW()
+      WHERE auth_id = ?
+    `;
+
+    const params = password
+      ? [fullname, email, phone, role, passwordHash, auth_id]
+      : [fullname, email, phone, role, auth_id];
+
+    await db.execute(query, params);
+
+    res.json({ message: "Employee updated successfully" });
   } catch (err) {
-    console.error('Lỗi khi lấy thông tin nhân viên:', err);
-    return res.status(500).json({ ok: false, error: 'Lỗi server' });
+    console.error("Admin update employee error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
 /*--------- 
- UPDATE INFOR EMPLOYEE BY infor_users_id (có kiểm tra token)
+ CẬP NHẬT HỒ SƠ CỦA CHÍNH MÌNH  (có kiểm tra token)
 ---------*/
 export const updateEmployee = async (req, res) => {
   const { infor_users_id } = req.params;
@@ -159,7 +285,7 @@ export const updateEmployee = async (req, res) => {
 };
 
 /*--------- 
- DELETE INFOR EMPLOYEE BY infor_users_id (có kiểm tra token)
+ DELETE INFOR EMPLOYEE BY  (có kiểm tra token)
 ---------*/
 export const deleteEmployee = async (req, res) => {
   const { infor_users_id } = req.params;

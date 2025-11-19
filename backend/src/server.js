@@ -78,8 +78,9 @@ const ensureDefaultAdmin = async () => {
       const auth_id = insertAuth.rows[0].auth_id;
 
       // Tạo users trỏ tới auth_id (nếu chưa có số điện thoại đó)
-      const userCheck = await pool.query('SELECT user_id FROM infor_users WHERE phone_number = $1 LIMIT 1', [phone_number]);
-      let user_id
+      const userCheck = await pool.query(
+        'SELECT auth_id FROM infor_users WHERE auth_id = $1 LIMIT 1', [auth_id]);
+      let user_id;
       if (userCheck.rowCount === 0) {
         const userResult = await pool.query(
           `INSERT INTO infor_users (auth_id, phone_number, full_name, card_id)
@@ -93,18 +94,18 @@ const ensureDefaultAdmin = async () => {
         await pool.query('UPDATE infor_users SET auth_id = $1 WHERE user_id = $2', [auth_id, user_id]);
       }
 
-      // Tạo employee nếu chưa tồn tại
-      // const empCheck = await pool.query('SELECT employee_id FROM infor_employee WHERE user_id = $1 LIMIT 1', [user_id]);
-      // if (empCheck.rowCount === 0) {
-      //   const empInsert = await pool.query(
-      //     `INSERT INTO employee (user_id, position_id, department_id, status_employee)
-      //      VALUES ($1, $2, $3, 'active') RETURNING employee_id`,
-      //     [user_id, position_id, department_id]
-      //   );
-      //   console.log(`✅ Default admin created. Employee ID: ${empInsert.rows[0].employee_id}`);
-      // } else {
-      //   console.log('ℹ️ Default admin employee already exists.');
-      // }
+      //Tạo employee nếu chưa tồn tại
+      const empCheck = await pool.query('SELECT employee_id FROM infor_employee WHERE user_id = $1 LIMIT 1', [user_id]);
+      if (empCheck.rowCount === 0) {
+        const empInsert = await pool.query(
+          `INSERT INTO infor_employee (user_id, auth_id, position_id, department_id, status_employee)
+           VALUES ($1, $2, $3, $4, 'active') RETURNING employee_id`,
+          [user_id, auth_id, position_id, department_id]
+        );
+        console.log(`✅ Default admin created. Employee ID: ${empInsert.rows[0].employee_id}`);
+      } else {
+        console.log('ℹ️ Default admin employee already exists.');
+      }
     } else {
       console.log('ℹ️ Default admin account already exists.');
     }
