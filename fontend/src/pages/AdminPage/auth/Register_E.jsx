@@ -46,8 +46,8 @@ const Register_E = () => {
       const res = await axios.post('http://localhost:5001/api/employee/register', payload);
 
       if (res.status === 201 && res.data) {
-        localStorage.setItem('employeeId', res.data.user.employee_id); // lưu ID
-        localStorage.setItem('token', res.data.user.token); //Lưu token
+        localStorage.setItem('employeeId', res.data.employee.employee_id); // lưu ID
+        localStorage.setItem('token', res.data.employee.token); //Lưu token
         setMessage('✅ Đăng ký thành công — chuyển đến trang đăng nhập...');
         setTimeout(() => navigate('/Admin/auth/login'), 1000);
       } else {
