@@ -1,20 +1,23 @@
 import { useState, useEffect } from "react";
 // TIẾP TÂN
-import DS_BN from "../Receptionist/DS_BN";
-import Them_BN from "../Receptionist/Them_BN";
+import DS_BN_v2 from "../Receptionist/DS_BN_v2";
+import Them_BN_v2 from "../Receptionist/Them_BN_v2";
 // BÁC SĨ
 import Individual_Patient_Management from "../Doctor/Individual_Patient_Management"; //Quản lý bệnh nhân của bác sĩ
 import Test_Result from "../Doctor/Test_Result"; //Phiếu xét nghiệm
 import Work_Schedule from "../Doctor/Work_Schedule"; //Lịch làm việc của bác sĩ
 // BÁC SĨ XÉT NGHIỆM/ CHỤP PHIM....
-import Laboratory_Test_Report from "../DoctorOther/Laboratory_Test_Report";
-import Test_Result_Form from "../DoctorOther/Test_Result_Form";
+import Laboratory_Test_Report from "../DoctorOther/Laboratory_Test_Report"
+import Test_Result_Form from "../DoctorOther/Test_Result_Form"
 // HỆ THỐNG
 import Appointment_List from "../System/Appointment_List"; //Danh sách cuộc hẹn
 import Patient_List_Details from "../System/Patient_List_Details"; //Danh sách chi tiết thông tin bệnh nhân
 // KẾ TOÁN
 import Found_Management from "../Accounting/Fund_Management";
 import SalaryManagement from "../Accounting/SalaryManagement";
+import Revenue_Report from "../Accounting/Revenue_Report";
+import Expense_Report from "../Accounting/Expense_Report";
+import Insurance_Management from "../Accounting/Insurance_Management";
 //ĐĂNG NHẬP/ĐĂNG KÝ
 import Login_E from "../auth/Login_E";
 import Register_E from "../auth/Register_E";
@@ -121,13 +124,13 @@ const DashBoard = () => {
             {context === "Quản lý nhân viên" && <Employees_Management setContext={setContext} />}
 
             {/* TIẾP TÂN */}
-            {context === "Thêm BN mới" && <Them_BN setContext={setContext} />}
-            {context === "Danh sách BN" && <DS_BN setContext={setContext} />}
+            {context === "Thêm BN mới" && <Them_BN_v2 setContext={setContext} />}
+            {context === "Danh sách BN" && <DS_BN_v2 setContext={setContext} />}
 
             {/* BÁC SĨ */}
             {context === "Quản lý BN cá nhân" && <Individual_Patient_Management setContext={setContext} />}
             {context === "Quản lý phiếu" && <Test_Result setContext={setContext} />}
-            {context === "Quản lý kết quả xét nghiệm" && <div>Quản lý kết quả xét nghiệm</div>}
+            {context === "Quản lý kết quả xét nghiệm" && <Test_Result setContext={setContext} />}
             {context === "Quản lý lịch làm việc" && <Work_Schedule setContext={setContext} />}
 
             {/* BÁC SĨ XÉT NGHIỆM/ CHỤP PHIM.... */}
@@ -137,9 +140,9 @@ const DashBoard = () => {
             {/* KẾ TOÁN */}
             {context === "Quản lý Quỹ" && <Found_Management setContext={setContext} />}
             {context === "Quản lý Lương" && <SalaryManagement setContext={setContext} />}
-            {context === "DT Khám & Chữa Bệnh" && <div>DT Khám & Chữa Bệnh</div>}
-            {context === "Chi Phí HĐ" && <div>Chi Phí HĐ</div>}
-            {context === "QL TT Bảo Hiểm" && <div>QL TT Bảo Hiểm</div>}
+            {context === "DT Khám & Chữa Bệnh" && <Revenue_Report setContext={setContext} />}
+            {context === "Chi Phí HĐ" && <Expense_Report setContext={setContext} />}
+            {context === "QL TT Bảo Hiểm" && <Insurance_Management setContext={setContext} />}
 
             {/* HỆ THỐNG */}
             {context === "Danh sách lịch hẹn BN" && <Appointment_List setContext={setContext} />}
