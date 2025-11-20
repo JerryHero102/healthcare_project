@@ -43,7 +43,7 @@ const DashBoard = () => {
     const getNavClasses = (navItem) => {
         // Classes mặc định
         const defaultClasses = "flex items-center text-[13px] text-black my-0.5 cursor-pointer px-3 py-2 rounded transition w-full truncate";
-        const activeClasses = "bg-[#FFC419] font-semibold text-black"; 
+        const activeClasses = "bg-[#FFC419] font-semibold text-black";
 
         if (context === navItem) {
             return `${defaultClasses} ${activeClasses}`;
@@ -66,7 +66,7 @@ const DashBoard = () => {
 
 //             if (!res.data?.ok) return;
 //             const dept = (res.data.data.department || '').trim();
-            
+
 //             //department trống hoặc null
 //             if (!dept) {
 //                 localStorage.setItem('department', '');
@@ -83,7 +83,7 @@ const DashBoard = () => {
 //                 (dep.includes('bác sĩ chuyên') || dep.includes('bác sĩ chuyên khoa') || dep.includes('bác sĩ')) &&
 //                 !dep.includes('kỹ thuật')
 //             ) {
-//                 setContext('Quản lý BN cá nhân'); 
+//                 setContext('Quản lý BN cá nhân');
 //                 return;
 //             }
 
@@ -93,7 +93,7 @@ const DashBoard = () => {
 //             }
 
 //             if (dep.includes('kế toán')) {
-//                 setContext('Quản lý Quỹ'); 
+//                 setContext('Quản lý Quỹ');
 //                 return;
 //             }
 
